@@ -1,0 +1,124 @@
+{
+  "meta": {
+    "field_set_version": "v2",
+    "profile": "PROPLUS_TARGET",
+    "notes": [
+      "Canonical financial fields the v2 ratio set depends on.",
+      "Every ratio in ratios.v2.json declares its fields via 'requires'; the loader",
+      "rejects any ratio naming a field that is absent from this registry.",
+      "'tier' records where the field actually comes from. It is NOT a promise that",
+      "the field is populated today - it is the ingestion debt each field carries.",
+      "A ratio whose fields are not yet populated resolves to MISSING and lowers",
+      "coverage. It never resolves to a fabricated value and never to a silent zero."
+    ],
+    "tiers": {
+      "CURRENT": "already populated today - a core.financials_quarterly column or the core.prices_daily join",
+      "KAP_XBRL": "present in official KAP XBRL filings; needs a schema column + semantic mapping",
+      "PROPLUS": "available from an InvestingPro Pro+ export; restated-only, CURRENT_KNOWLEDGE lane",
+      "KAP_FOOTNOTE": "only in filing footnotes; extraction is unsolved, ratios depending on it stay MISSING",
+      "MARKET_EXT": "market series that exists upstream but is not ingested yet (volume)"
+    },
+    "flows": {
+      "PERIOD": "flow item - aggregate with sum4q/ttm across quarters",
+      "POINT": "balance-sheet stock - aggregate with avg across period start/end",
+      "MARKET": "market observation at t0",
+      "DERIVED": "computed from other registry fields, never ingested directly"
+    }
+  },
+
+  "fields": {
+    "revenue":                  {"tier": "CURRENT", "flow": "PERIOD", "sign": "POSITIVE"},
+    "cogs":                     {"tier": "CURRENT", "flow": "PERIOD", "sign": "POSITIVE"},
+    "gross_profit":             {"tier": "CURRENT", "flow": "PERIOD", "sign": "ANY"},
+    "ebit":                     {"tier": "CURRENT", "flow": "PERIOD", "sign": "ANY"},
+    "net_income":               {"tier": "CURRENT", "flow": "PERIOD", "sign": "ANY"},
+    "interest_exp":             {"tier": "CURRENT", "flow": "PERIOD", "sign": "POSITIVE"},
+    "cfo":                      {"tier": "CURRENT", "flow": "PERIOD", "sign": "ANY"},
+    "capex":                    {"tier": "CURRENT", "flow": "PERIOD", "sign": "ANY"},
+
+    "total_assets":             {"tier": "CURRENT", "flow": "POINT", "sign": "POSITIVE"},
+    "total_equity":             {"tier": "CURRENT", "flow": "POINT", "sign": "ANY"},
+    "current_assets":           {"tier": "CURRENT", "flow": "POINT", "sign": "POSITIVE"},
+    "current_liabilities":      {"tier": "CURRENT", "flow": "POINT", "sign": "POSITIVE"},
+    "cash_and_eq":              {"tier": "CURRENT", "flow": "POINT", "sign": "POSITIVE"},
+    "st_investments":           {"tier": "CURRENT", "flow": "POINT", "sign": "POSITIVE"},
+    "receivables":              {"tier": "CURRENT", "flow": "POINT", "sign": "POSITIVE"},
+    "inventory":                {"tier": "CURRENT", "flow": "POINT", "sign": "POSITIVE"},
+    "debt_st":                  {"tier": "CURRENT", "flow": "POINT", "sign": "POSITIVE"},
+    "debt_lt":                  {"tier": "CURRENT", "flow": "POINT", "sign": "POSITIVE"},
+    "shares_out":               {"tier": "CURRENT", "flow": "POINT", "sign": "POSITIVE"},
+    "shares_diluted":           {"tier": "CURRENT", "flow": "POINT", "sign": "POSITIVE"},
+    "price":                    {"tier": "CURRENT", "flow": "MARKET", "sign": "POSITIVE"},
+
+    "depreciation_amortization": {
+      "tier": "KAP_XBRL", "flow": "PERIOD", "sign": "POSITIVE",
+      "unlocks": "EBITDA - the single highest-value missing field. Without it EV/EBITDA, the most used BIST multiple, cannot be computed."
+    },
+    "tax_expense":              {"tier": "KAP_XBRL", "flow": "PERIOD", "sign": "ANY"},
+    "pretax_income":            {"tier": "KAP_XBRL", "flow": "PERIOD", "sign": "ANY"},
+    "accounts_payable": {
+      "tier": "KAP_XBRL", "flow": "POINT", "sign": "POSITIVE",
+      "unlocks": "Real DPO. The v1 set used debt_st (financial debt) as a payables proxy, which is wrong and also corrupts CCC."
+    },
+    "dividends_paid":           {"tier": "KAP_XBRL", "flow": "PERIOD", "sign": "POSITIVE"},
+    "minority_interest":        {"tier": "KAP_XBRL", "flow": "POINT", "sign": "ANY"},
+    "lease_liabilities":        {"tier": "KAP_XBRL", "flow": "POINT", "sign": "POSITIVE"},
+    "net_ppe":                  {"tier": "KAP_XBRL", "flow": "POINT", "sign": "POSITIVE"},
+    "intangibles_goodwill":     {"tier": "KAP_XBRL", "flow": "POINT", "sign": "POSITIVE"},
+
+    "eps_fwd_1y":               {"tier": "PROPLUS", "flow": "MARKET", "sign": "ANY"},
+    "eps_fwd_1y_3m_ago":        {"tier": "PROPLUS", "flow": "MARKET", "sign": "ANY"},
+    "ebitda_fwd_1y":            {"tier": "PROPLUS", "flow": "MARKET", "sign": "ANY"},
+    "revenue_fwd_1y":           {"tier": "PROPLUS", "flow": "MARKET", "sign": "POSITIVE"},
+    "eps_surprise_4q_avg":      {"tier": "PROPLUS", "flow": "MARKET", "sign": "ANY"},
+    "altman_z":                 {"tier": "PROPLUS", "flow": "MARKET", "sign": "ANY"},
+    "beneish_m":                {"tier": "PROPLUS", "flow": "MARKET", "sign": "ANY"},
+
+    "fx_debt": {
+      "tier": "KAP_FOOTNOTE", "flow": "POINT", "sign": "POSITIVE",
+      "unlocks": "FX debt share. Not available from Pro+ at any tier. Kills BIST companies on a TL move and no profitability ratio warns first."
+    },
+    "fx_revenue": {
+      "tier": "KAP_FOOTNOTE", "flow": "PERIOD", "sign": "POSITIVE",
+      "unlocks": "Natural hedge. FX debt is only dangerous without matching FX revenue."
+    },
+
+    "adv_60d_try": {
+      "tier": "MARKET_EXT", "flow": "MARKET", "sign": "POSITIVE",
+      "unlocks": "The trading-liquidity gate. Not a ratio - it decides whether a name is tradeable at all. core.prices_daily.volume exists and yfinance already returns volume; only the wiring is missing."
+    },
+
+    "EBITDA": {
+      "tier": "KAP_XBRL", "flow": "DERIVED", "sign": "ANY",
+      "derived_from": ["ebit", "depreciation_amortization"]
+    },
+    "MARKET_CAP": {
+      "tier": "CURRENT", "flow": "DERIVED", "sign": "POSITIVE",
+      "derived_from": ["price", "shares_out"]
+    },
+    "NET_DEBT": {
+      "tier": "CURRENT", "flow": "DERIVED", "sign": "ANY",
+      "derived_from": ["debt_st", "debt_lt", "cash_and_eq", "st_investments"]
+    },
+    "EV": {
+      "tier": "CURRENT", "flow": "DERIVED", "sign": "POSITIVE",
+      "derived_from": ["MARKET_CAP", "NET_DEBT", "minority_interest"]
+    },
+    "INVESTED_CAPITAL": {
+      "tier": "CURRENT", "flow": "DERIVED", "sign": "ANY",
+      "derived_from": ["total_equity", "debt_st", "debt_lt", "cash_and_eq"]
+    },
+    "NOPAT": {
+      "tier": "KAP_XBRL", "flow": "DERIVED", "sign": "ANY",
+      "derived_from": ["ebit", "tax_expense", "pretax_income"]
+    },
+    "TANGIBLE_BOOK": {
+      "tier": "KAP_XBRL", "flow": "DERIVED", "sign": "ANY",
+      "derived_from": ["total_equity", "intangibles_goodwill"]
+    },
+    "FCF": {
+      "tier": "CURRENT", "flow": "DERIVED", "sign": "ANY",
+      "derived_from": ["cfo", "capex"]
+    }
+  }
+}

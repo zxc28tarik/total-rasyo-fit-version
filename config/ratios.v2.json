@@ -1,0 +1,748 @@
+{
+  "meta": {
+    "ratio_set_version": "v2",
+    "field_set_version": "v2",
+    "profile": "PROPLUS_TARGET",
+    "sector_groups": ["BANK", "FINANCIAL", "INSURANCE", "HOLDING", "GYO", "NONFIN"],
+    "families": {
+      "WORKING_CAPITAL":    "LIQ",
+      "CASH_BUFFER":        "LIQ",
+      "DEBT_LEVEL":         "LEV",
+      "DEBT_SERVICE":       "LEV",
+      "DEBT_STRUCTURE":     "LEV",
+      "CASH_GENERATION":    "CASH",
+      "CASH_CONVERSION":    "CASH",
+      "CAPEX_INTENSITY":    "CASH",
+      "MARGIN":             "PROFIT",
+      "RETURN_ON_CAPITAL":  "PROFIT",
+      "WC_CYCLE":           "EFF",
+      "ASSET_PRODUCTIVITY": "EFF",
+      "TOP_LINE":           "GROWTH",
+      "BOTTOM_LINE":        "GROWTH",
+      "PER_SHARE":          "GROWTH",
+      "EARNINGS_MULTIPLE":  "VAL",
+      "CASHFLOW_MULTIPLE":  "VAL",
+      "ASSET_MULTIPLE":     "VAL",
+      "YIELD":              "VAL"
+    },
+    "composites": {
+      "quality": ["LIQ", "LEV", "CASH", "PROFIT", "EFF"],
+      "growth":  ["GROWTH"],
+      "value":   ["VAL"]
+    },
+    "pillar_shares": {
+      "default": {"LIQ": 0.12, "LEV": 0.24, "CASH": 0.24, "PROFIT": 0.28, "EFF": 0.12, "GROWTH": 1.0, "VAL": 1.0},
+      "by_group": {
+        "BANK":      {"LIQ": 0.00, "LEV": 0.30, "CASH": 0.20, "PROFIT": 0.40, "EFF": 0.10, "GROWTH": 1.0, "VAL": 1.0},
+        "FINANCIAL": {"LIQ": 0.00, "LEV": 0.30, "CASH": 0.20, "PROFIT": 0.40, "EFF": 0.10, "GROWTH": 1.0, "VAL": 1.0},
+        "INSURANCE": {"LIQ": 0.00, "LEV": 0.25, "CASH": 0.20, "PROFIT": 0.45, "EFF": 0.10, "GROWTH": 1.0, "VAL": 1.0}
+      },
+      "note": [
+        "A pillar's share is what this table says and nothing else. It does NOT",
+        "scale with how many ratios the pillar contains - that was the v1 defect",
+        "where pillar_w * ratio_w was handed to every ratio and then divided by",
+        "the weight sum, so a pillar's real share was (ratio count x pillar_w)/sum.",
+        "Shares are renormalised over the pillars that actually have data, per",
+        "composite. GROWTH and VAL sit alone in their composites, so their raw",
+        "share is irrelevant and set to 1.0."
+      ]
+    },
+    "contract": [
+      "Families split the pillar share; ratios split the family share. Adding a",
+      "ratio therefore never silently reweights a pillar.",
+      "",
+      "Three distinct outcomes replace v1's single 'na_if' bucket:",
+      "  MISSING        - a required field is null. Lowers coverage.",
+      "  BEST / WORST   - mathematically undefined but economically unambiguous",
+      "                   (a debt-free company has perfect interest coverage).",
+      "  NOT_APPLICABLE - meaningless for this company. Leaves the denominator",
+      "                   entirely, so it neither helps nor hurts.",
+      "",
+      "Ratio weights are NEVER fitted. Equal weight inside a family is a",
+      "deliberate constraint: ~40 independent quarters of BIST history support",
+      "fitting roughly 4-7 parameters, which is spent on the axis weights and",
+      "gate thresholds, not on 67 ratio weights.",
+      "",
+      "Anchors are supplied only where a defensible economic level exists.",
+      "Nominal return ratios (ROE/ROA/ROIC) and valuation multiples carry NO",
+      "anchor on purpose: under Turkish inflation a nominal 30% ROE may be a",
+      "real loss, and a PE of 6 may be an ordinary market level. An invented",
+      "anchor is worse than no anchor; those ratios score purely relative.",
+      "",
+      "There are no *_STABILITY ratios. Stability is not a ratio - it is the",
+      "third component of the (level, slope, stability) triple the scoring layer",
+      "derives for every ratio over 8 quarters."
+    ]
+  },
+
+  "ratios": {
+
+    "MARKET_CAP": {
+      "role": "INTERMEDIATE", "family": "ASSET_MULTIPLE",
+      "formula": "price * shares_out",
+      "requires": ["price", "shares_out"],
+      "domain": ["price > 0", "shares_out > 0"]
+    },
+    "NET_DEBT": {
+      "role": "INTERMEDIATE", "family": "DEBT_LEVEL",
+      "formula": "(nz(debt_st, 0) + nz(debt_lt, 0)) - (nz(cash_and_eq, 0) + nz(st_investments, 0))",
+      "requires": ["debt_st", "debt_lt", "cash_and_eq", "st_investments"],
+      "domain": []
+    },
+    "EV": {
+      "role": "INTERMEDIATE", "family": "EARNINGS_MULTIPLE",
+      "formula": "max(MARKET_CAP + NET_DEBT + nz(minority_interest, 0), 0)",
+      "requires": ["price", "shares_out", "debt_st", "debt_lt", "cash_and_eq", "st_investments"],
+      "domain": ["MARKET_CAP + NET_DEBT + nz(minority_interest, 0) > 0"]
+    },
+    "EBITDA_TTM": {
+      "role": "INTERMEDIATE", "family": "MARGIN",
+      "formula": "sum4q(ebit) + sum4q(depreciation_amortization)",
+      "requires": ["ebit", "depreciation_amortization"],
+      "domain": []
+    },
+    "FCF_TTM": {
+      "role": "INTERMEDIATE", "family": "CASH_GENERATION",
+      "formula": "sum4q(cfo) - abs(sum4q(capex))",
+      "requires": ["cfo", "capex"],
+      "domain": []
+    },
+    "EFFECTIVE_TAX_RATE": {
+      "role": "INTERMEDIATE", "family": "RETURN_ON_CAPITAL",
+      "formula": "sum4q(tax_expense) / sum4q(pretax_income)",
+      "requires": ["tax_expense", "pretax_income"],
+      "domain": ["sum4q(pretax_income) > 0"]
+    },
+    "NOPAT": {
+      "role": "INTERMEDIATE", "family": "RETURN_ON_CAPITAL",
+      "formula": "sum4q(ebit) * (1 - min(max(EFFECTIVE_TAX_RATE, 0), 0.6))",
+      "requires": ["ebit", "tax_expense", "pretax_income"],
+      "domain": []
+    },
+    "INVESTED_CAPITAL": {
+      "role": "INTERMEDIATE", "family": "RETURN_ON_CAPITAL",
+      "formula": "avg(total_equity) + avg(debt_st) + avg(debt_lt) - avg(cash_and_eq)",
+      "requires": ["total_equity", "debt_st", "debt_lt", "cash_and_eq"],
+      "domain": ["avg(total_equity) + avg(debt_st) + avg(debt_lt) - avg(cash_and_eq) > 0"]
+    },
+    "TANGIBLE_BOOK": {
+      "role": "INTERMEDIATE", "family": "ASSET_MULTIPLE",
+      "formula": "total_equity - nz(intangibles_goodwill, 0)",
+      "requires": ["total_equity"],
+      "domain": ["total_equity - nz(intangibles_goodwill, 0) > 0"]
+    },
+
+    "CURRENT_RATIO": {
+      "family": "WORKING_CAPITAL", "direction": "HIGHER_BETTER",
+      "formula": "current_assets / current_liabilities",
+      "requires": ["current_assets", "current_liabilities"],
+      "domain": ["current_liabilities > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "anchor": {"weak": 1.0, "strong": 2.0},
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "QUICK_RATIO": {
+      "family": "WORKING_CAPITAL", "direction": "HIGHER_BETTER",
+      "formula": "(current_assets - nz(inventory, 0)) / current_liabilities",
+      "requires": ["current_assets", "current_liabilities"],
+      "domain": ["current_liabilities > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "anchor": {"weak": 0.7, "strong": 1.3},
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "CASH_RATIO": {
+      "family": "WORKING_CAPITAL", "direction": "HIGHER_BETTER",
+      "formula": "(cash_and_eq + st_investments) / current_liabilities",
+      "requires": ["cash_and_eq", "st_investments", "current_liabilities"],
+      "domain": ["current_liabilities > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "anchor": {"weak": 0.15, "strong": 0.60},
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+
+    "CASH_TO_ASSETS": {
+      "family": "CASH_BUFFER", "direction": "HIGHER_BETTER",
+      "formula": "(cash_and_eq + st_investments) / total_assets",
+      "requires": ["cash_and_eq", "st_investments", "total_assets"],
+      "domain": ["total_assets > 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "FINANCIAL", "INSURANCE"]
+    },
+    "OCF_TO_CL": {
+      "family": "CASH_BUFFER", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(cfo) / current_liabilities",
+      "requires": ["cfo", "current_liabilities"],
+      "domain": ["current_liabilities > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "CASH_TO_ST_DEBT": {
+      "family": "CASH_BUFFER", "direction": "HIGHER_BETTER",
+      "formula": "(cash_and_eq + st_investments) / debt_st",
+      "requires": ["cash_and_eq", "st_investments", "debt_st"],
+      "domain": ["debt_st > 0"],
+      "out_of_domain": "BEST",
+      "anchor": {"weak": 0.5, "strong": 2.0},
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "FINANCIAL", "INSURANCE"]
+    },
+
+    "DEBT_TO_EQUITY": {
+      "family": "DEBT_LEVEL", "direction": "LOWER_BETTER",
+      "formula": "(nz(debt_st, 0) + nz(debt_lt, 0)) / total_equity",
+      "requires": ["debt_st", "debt_lt", "total_equity"],
+      "domain": ["total_equity > 0"],
+      "out_of_domain": "WORST",
+      "anchor": {"weak": 1.5, "strong": 0.4},
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "DEBT_TO_CAPITAL": {
+      "family": "DEBT_LEVEL", "direction": "LOWER_BETTER",
+      "formula": "(nz(debt_st, 0) + nz(debt_lt, 0)) / ((nz(debt_st, 0) + nz(debt_lt, 0)) + total_equity)",
+      "requires": ["debt_st", "debt_lt", "total_equity"],
+      "domain": ["total_equity > 0", "(nz(debt_st, 0) + nz(debt_lt, 0)) + total_equity > 0"],
+      "out_of_domain": "WORST",
+      "anchor": {"weak": 0.60, "strong": 0.25},
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "NET_DEBT_TO_EQUITY": {
+      "family": "DEBT_LEVEL", "direction": "LOWER_BETTER",
+      "formula": "NET_DEBT / total_equity",
+      "requires": ["debt_st", "debt_lt", "cash_and_eq", "st_investments", "total_equity"],
+      "domain": ["total_equity > 0"],
+      "out_of_domain": "WORST",
+      "anchor": {"weak": 1.0, "strong": 0.0},
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "NET_DEBT_TO_EBITDA": {
+      "family": "DEBT_LEVEL", "direction": "LOWER_BETTER",
+      "formula": "NET_DEBT / EBITDA_TTM",
+      "requires": ["debt_st", "debt_lt", "cash_and_eq", "st_investments", "ebit", "depreciation_amortization"],
+      "domain": ["EBITDA_TTM > 0"],
+      "out_of_domain": "WORST",
+      "anchor": {"weak": 4.0, "strong": 1.0},
+      "transform": "clip",
+      "clip": {"low": -3.0, "high": 15.0},
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+
+    "INTEREST_COVERAGE": {
+      "family": "DEBT_SERVICE", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(ebit) / sum4q(interest_exp)",
+      "requires": ["ebit", "interest_exp"],
+      "domain": ["sum4q(interest_exp) > 0"],
+      "out_of_domain": "BEST",
+      "out_of_domain_note": "No interest expense means no debt service burden, not missing data. v1 marked this NA and the NaN wiped the company's entire score.",
+      "anchor": {"weak": 2.0, "strong": 8.0},
+      "transform": "signed_log",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "EBITDA_INTEREST_COVERAGE": {
+      "family": "DEBT_SERVICE", "direction": "HIGHER_BETTER",
+      "formula": "EBITDA_TTM / sum4q(interest_exp)",
+      "requires": ["ebit", "depreciation_amortization", "interest_exp"],
+      "domain": ["sum4q(interest_exp) > 0"],
+      "out_of_domain": "BEST",
+      "anchor": {"weak": 3.0, "strong": 10.0},
+      "transform": "signed_log",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "CFO_TO_TOTAL_DEBT": {
+      "family": "DEBT_SERVICE", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(cfo) / (nz(debt_st, 0) + nz(debt_lt, 0))",
+      "requires": ["cfo", "debt_st", "debt_lt"],
+      "domain": ["(nz(debt_st, 0) + nz(debt_lt, 0)) > 0"],
+      "out_of_domain": "BEST",
+      "anchor": {"weak": 0.15, "strong": 0.45},
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "REFINANCING_WALL": {
+      "family": "DEBT_SERVICE", "direction": "LOWER_BETTER",
+      "formula": "debt_st / (cash_and_eq + st_investments + max(sum4q(cfo), 0))",
+      "requires": ["debt_st", "cash_and_eq", "st_investments", "cfo"],
+      "domain": ["(cash_and_eq + st_investments + max(sum4q(cfo), 0)) > 0"],
+      "out_of_domain": "WORST",
+      "out_of_domain_note": "No cash and no operating cash flow against short-term debt is the worst case, not a missing measurement.",
+      "anchor": {"weak": 1.5, "strong": 0.5},
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "FINANCIAL", "INSURANCE"]
+    },
+
+    "ST_DEBT_RATIO": {
+      "family": "DEBT_STRUCTURE", "direction": "LOWER_BETTER",
+      "formula": "debt_st / (nz(debt_st, 0) + nz(debt_lt, 0))",
+      "requires": ["debt_st", "debt_lt"],
+      "domain": ["(nz(debt_st, 0) + nz(debt_lt, 0)) > 0"],
+      "out_of_domain": "BEST",
+      "anchor": {"weak": 0.70, "strong": 0.25},
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "FINANCIAL", "INSURANCE"]
+    },
+    "LEASE_ADJ_NET_DEBT_TO_EBITDA": {
+      "family": "DEBT_STRUCTURE", "direction": "LOWER_BETTER",
+      "formula": "(NET_DEBT + nz(lease_liabilities, 0)) / EBITDA_TTM",
+      "requires": ["debt_st", "debt_lt", "cash_and_eq", "st_investments", "lease_liabilities", "ebit", "depreciation_amortization"],
+      "domain": ["EBITDA_TTM > 0"],
+      "out_of_domain": "WORST",
+      "anchor": {"weak": 4.5, "strong": 1.5},
+      "transform": "clip",
+      "clip": {"low": -3.0, "high": 15.0},
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "FX_DEBT_RATIO": {
+      "family": "DEBT_STRUCTURE", "direction": "LOWER_BETTER",
+      "formula": "max(fx_debt - nz(fx_revenue, 0), 0) / (nz(debt_st, 0) + nz(debt_lt, 0))",
+      "requires": ["fx_debt", "debt_st", "debt_lt"],
+      "domain": ["(nz(debt_st, 0) + nz(debt_lt, 0)) > 0"],
+      "out_of_domain": "BEST",
+      "anchor": {"weak": 0.50, "strong": 0.10},
+      "source_note": "fx_debt/fx_revenue are KAP_FOOTNOTE tier and unavailable from Pro+ at any price. Until footnote extraction lands this ratio resolves to MISSING and lowers coverage - it is never silently treated as zero FX risk.",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "ALTMAN_Z_SCORE": {
+      "family": "DEBT_STRUCTURE", "direction": "HIGHER_BETTER",
+      "formula": "altman_z",
+      "requires": ["altman_z"],
+      "domain": [],
+      "out_of_domain": "MISSING",
+      "anchor": {"weak": 1.8, "strong": 3.0},
+      "applies_to": ["NONFIN", "HOLDING"]
+    },
+
+    "CFO_MARGIN": {
+      "family": "CASH_GENERATION", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(cfo) / sum4q(revenue)",
+      "requires": ["cfo", "revenue"],
+      "domain": ["sum4q(revenue) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "FCF_MARGIN": {
+      "family": "CASH_GENERATION", "direction": "HIGHER_BETTER",
+      "formula": "FCF_TTM / sum4q(revenue)",
+      "requires": ["cfo", "capex", "revenue"],
+      "domain": ["sum4q(revenue) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "FCF_TO_ASSETS": {
+      "family": "CASH_GENERATION", "direction": "HIGHER_BETTER",
+      "formula": "FCF_TTM / avg(total_assets)",
+      "requires": ["cfo", "capex", "total_assets"],
+      "domain": ["avg(total_assets) > 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+
+    "CFO_TO_NET_INCOME": {
+      "family": "CASH_CONVERSION", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(cfo) / sum4q(net_income)",
+      "requires": ["cfo", "net_income"],
+      "domain": ["sum4q(net_income) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "out_of_domain_note": "With a loss the ratio inverts sign and stops meaning 'earnings quality'. Excluded from the denominator rather than scored as bad.",
+      "anchor": {"weak": 0.6, "strong": 1.1},
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "CFO_TO_EBITDA": {
+      "family": "CASH_CONVERSION", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(cfo) / EBITDA_TTM",
+      "requires": ["cfo", "ebit", "depreciation_amortization"],
+      "domain": ["EBITDA_TTM > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "anchor": {"weak": 0.55, "strong": 0.95},
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "ACCRUALS_TO_ASSETS": {
+      "family": "CASH_CONVERSION", "direction": "LOWER_BETTER",
+      "formula": "(sum4q(net_income) - sum4q(cfo)) / avg(total_assets)",
+      "requires": ["net_income", "cfo", "total_assets"],
+      "domain": ["avg(total_assets) > 0"],
+      "out_of_domain": "MISSING",
+      "anchor": {"weak": 0.10, "strong": -0.02},
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "BENEISH_M_SCORE": {
+      "family": "CASH_CONVERSION", "direction": "LOWER_BETTER",
+      "formula": "beneish_m",
+      "requires": ["beneish_m"],
+      "domain": [],
+      "out_of_domain": "MISSING",
+      "anchor": {"weak": -1.78, "strong": -2.50},
+      "applies_to": ["NONFIN", "HOLDING"]
+    },
+
+    "CAPEX_TO_SALES": {
+      "family": "CAPEX_INTENSITY", "direction": "LOWER_BETTER",
+      "formula": "abs(sum4q(capex)) / sum4q(revenue)",
+      "requires": ["capex", "revenue"],
+      "domain": ["sum4q(revenue) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "applies_to": ["NONFIN", "GYO"]
+    },
+    "CAPEX_TO_DA": {
+      "family": "CAPEX_INTENSITY", "direction": "BAND",
+      "formula": "abs(sum4q(capex)) / sum4q(depreciation_amortization)",
+      "requires": ["capex", "depreciation_amortization"],
+      "domain": ["sum4q(depreciation_amortization) > 0"],
+      "out_of_domain": "MISSING",
+      "band": {"low": 0.8, "high": 1.8},
+      "band_note": "Below 1 the asset base is shrinking; far above it capital is being sunk faster than it is earned back. Neither end is 'better'.",
+      "applies_to": ["NONFIN", "GYO"]
+    },
+    "CAPEX_TO_CFO": {
+      "family": "CAPEX_INTENSITY", "direction": "LOWER_BETTER",
+      "formula": "abs(sum4q(capex)) / sum4q(cfo)",
+      "requires": ["capex", "cfo"],
+      "domain": ["sum4q(cfo) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "applies_to": ["NONFIN", "GYO"]
+    },
+
+    "GROSS_MARGIN": {
+      "family": "MARGIN", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(gross_profit) / sum4q(revenue)",
+      "requires": ["gross_profit", "revenue"],
+      "domain": ["sum4q(revenue) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "applies_to": ["NONFIN", "HOLDING"]
+    },
+    "EBITDA_MARGIN": {
+      "family": "MARGIN", "direction": "HIGHER_BETTER",
+      "formula": "EBITDA_TTM / sum4q(revenue)",
+      "requires": ["ebit", "depreciation_amortization", "revenue"],
+      "domain": ["sum4q(revenue) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "OPERATING_MARGIN": {
+      "family": "MARGIN", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(ebit) / sum4q(revenue)",
+      "requires": ["ebit", "revenue"],
+      "domain": ["sum4q(revenue) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "NET_MARGIN": {
+      "family": "MARGIN", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(net_income) / sum4q(revenue)",
+      "requires": ["net_income", "revenue"],
+      "domain": ["sum4q(revenue) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+
+    "ROE": {
+      "family": "RETURN_ON_CAPITAL", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(net_income) / avg(total_equity)",
+      "requires": ["net_income", "total_equity"],
+      "domain": ["avg(total_equity) > 0"],
+      "out_of_domain": "WORST",
+      "anchor_note": "No anchor on purpose - a nominal 30% ROE can be a real loss under Turkish inflation. Relative only until a real-terms numeraire lands.",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "ROA": {
+      "family": "RETURN_ON_CAPITAL", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(net_income) / avg(total_assets)",
+      "requires": ["net_income", "total_assets"],
+      "domain": ["avg(total_assets) > 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "ROIC": {
+      "family": "RETURN_ON_CAPITAL", "direction": "HIGHER_BETTER",
+      "formula": "NOPAT / INVESTED_CAPITAL",
+      "requires": ["ebit", "tax_expense", "pretax_income", "total_equity", "debt_st", "debt_lt", "cash_and_eq"],
+      "domain": ["INVESTED_CAPITAL > 0"],
+      "out_of_domain": "MISSING",
+      "supersedes": "ROIC_PROXY",
+      "supersedes_note": "v1's ROIC_PROXY used pre-tax EBIT over (assets - current liabilities). This uses real NOPAT over invested capital.",
+      "applies_to": ["NONFIN", "HOLDING"]
+    },
+    "ROCE": {
+      "family": "RETURN_ON_CAPITAL", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(ebit) / INVESTED_CAPITAL",
+      "requires": ["ebit", "total_equity", "debt_st", "debt_lt", "cash_and_eq"],
+      "domain": ["INVESTED_CAPITAL > 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING"]
+    },
+
+    "DSO_DAYS": {
+      "family": "WC_CYCLE", "direction": "LOWER_BETTER",
+      "formula": "(avg(receivables) / sum4q(revenue)) * 365",
+      "requires": ["receivables", "revenue"],
+      "domain": ["sum4q(revenue) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "applies_to": ["NONFIN"]
+    },
+    "DIO_DAYS": {
+      "family": "WC_CYCLE", "direction": "LOWER_BETTER",
+      "formula": "(avg(inventory) / sum4q(cogs)) * 365",
+      "requires": ["inventory", "cogs"],
+      "domain": ["sum4q(cogs) > 0", "avg(inventory) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "out_of_domain_note": "Zero inventory is a service business, not missing data. It leaves the denominator instead of being scored.",
+      "applies_to": ["NONFIN"]
+    },
+    "DPO_DAYS": {
+      "family": "WC_CYCLE", "direction": "HIGHER_BETTER",
+      "formula": "(avg(accounts_payable) / sum4q(cogs)) * 365",
+      "requires": ["accounts_payable", "cogs"],
+      "domain": ["sum4q(cogs) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "supersedes": "DPO_DAYS_PROXY",
+      "supersedes_note": "v1 divided short-term FINANCIAL debt by COGS and called it days payable. Trade payables and bank debt are unrelated; the error also propagated into CCC.",
+      "applies_to": ["NONFIN"]
+    },
+    "CCC_DAYS": {
+      "family": "WC_CYCLE", "direction": "LOWER_BETTER",
+      "formula": "DSO_DAYS + DIO_DAYS - DPO_DAYS",
+      "requires": ["receivables", "revenue", "inventory", "cogs", "accounts_payable"],
+      "domain": [],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN"]
+    },
+
+    "ASSET_TURNOVER": {
+      "family": "ASSET_PRODUCTIVITY", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(revenue) / avg(total_assets)",
+      "requires": ["revenue", "total_assets"],
+      "domain": ["avg(total_assets) > 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING"]
+    },
+    "FIXED_ASSET_TURNOVER": {
+      "family": "ASSET_PRODUCTIVITY", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(revenue) / avg(net_ppe)",
+      "requires": ["revenue", "net_ppe"],
+      "domain": ["avg(net_ppe) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "applies_to": ["NONFIN"]
+    },
+    "WC_TO_SALES": {
+      "family": "ASSET_PRODUCTIVITY", "direction": "LOWER_BETTER",
+      "formula": "(avg(current_assets) - avg(current_liabilities)) / sum4q(revenue)",
+      "requires": ["current_assets", "current_liabilities", "revenue"],
+      "domain": ["sum4q(revenue) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "applies_to": ["NONFIN"]
+    },
+
+    "REVENUE_YOY_GROWTH": {
+      "family": "TOP_LINE", "direction": "HIGHER_BETTER",
+      "formula": "(revenue - lag4q(revenue)) / abs(lag4q(revenue))",
+      "requires": ["revenue"],
+      "domain": ["lag4q(revenue) != 0"],
+      "out_of_domain": "MISSING",
+      "inflation_note": "Nominal. Under Turkish inflation most of this is price level, not volume. Becomes meaningful only against a real-terms numeraire.",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "REVENUE_CAGR_3Y": {
+      "family": "TOP_LINE", "direction": "HIGHER_BETTER",
+      "formula": "(revenue / lag(revenue, 12)) - 1",
+      "requires": ["revenue"],
+      "domain": ["lag(revenue, 12) > 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "REVENUE_FWD_GROWTH": {
+      "family": "TOP_LINE", "direction": "HIGHER_BETTER",
+      "formula": "(revenue_fwd_1y - sum4q(revenue)) / abs(sum4q(revenue))",
+      "requires": ["revenue_fwd_1y", "revenue"],
+      "domain": ["sum4q(revenue) > 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+
+    "EBITDA_YOY_GROWTH": {
+      "family": "BOTTOM_LINE", "direction": "HIGHER_BETTER",
+      "formula": "(EBITDA_TTM - (lag(ebit, 4) + lag(depreciation_amortization, 4))) / abs(lag(ebit, 4) + lag(depreciation_amortization, 4))",
+      "requires": ["ebit", "depreciation_amortization"],
+      "domain": ["(lag(ebit, 4) + lag(depreciation_amortization, 4)) != 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "EBIT_YOY_GROWTH": {
+      "family": "BOTTOM_LINE", "direction": "HIGHER_BETTER",
+      "formula": "(ebit - lag4q(ebit)) / abs(lag4q(ebit))",
+      "requires": ["ebit"],
+      "domain": ["lag4q(ebit) != 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "NET_INCOME_YOY_GROWTH": {
+      "family": "BOTTOM_LINE", "direction": "HIGHER_BETTER",
+      "formula": "(net_income - lag4q(net_income)) / abs(lag4q(net_income))",
+      "requires": ["net_income"],
+      "domain": ["lag4q(net_income) != 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "CFO_YOY_GROWTH": {
+      "family": "BOTTOM_LINE", "direction": "HIGHER_BETTER",
+      "formula": "(cfo - lag4q(cfo)) / abs(lag4q(cfo))",
+      "requires": ["cfo"],
+      "domain": ["lag4q(cfo) != 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "FCF_YOY_GROWTH": {
+      "family": "BOTTOM_LINE", "direction": "HIGHER_BETTER",
+      "formula": "(FCF_TTM - (lag(cfo, 4) - abs(lag(capex, 4)))) / abs(lag(cfo, 4) - abs(lag(capex, 4)))",
+      "requires": ["cfo", "capex"],
+      "domain": ["(lag(cfo, 4) - abs(lag(capex, 4))) != 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+
+    "EPS_YOY_GROWTH": {
+      "family": "PER_SHARE", "direction": "HIGHER_BETTER",
+      "formula": "((net_income / shares_diluted) - (lag4q(net_income) / lag(shares_diluted, 4))) / abs(lag4q(net_income) / lag(shares_diluted, 4))",
+      "requires": ["net_income", "shares_diluted"],
+      "domain": ["shares_diluted > 0", "lag(shares_diluted, 4) > 0", "lag4q(net_income) != 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "SHARE_COUNT_GROWTH": {
+      "family": "PER_SHARE", "direction": "LOWER_BETTER",
+      "formula": "(shares_out - lag4q(shares_out)) / lag4q(shares_out)",
+      "requires": ["shares_out"],
+      "domain": ["lag4q(shares_out) > 0"],
+      "out_of_domain": "MISSING",
+      "anchor": {"weak": 0.05, "strong": 0.0},
+      "replaces_module": "Ek5_dilution",
+      "replaces_module_note": "Dilution was going to be a flat -0.10 module penalty on announced rights issues. As a ratio it is continuous instead of a cliff, needs no corporate-action feed, and also catches convertibles and stock compensation.",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "BVPS_GROWTH": {
+      "family": "PER_SHARE", "direction": "HIGHER_BETTER",
+      "formula": "((total_equity / shares_out) - (lag(total_equity, 4) / lag(shares_out, 4))) / abs(lag(total_equity, 4) / lag(shares_out, 4))",
+      "requires": ["total_equity", "shares_out"],
+      "domain": ["shares_out > 0", "lag(shares_out, 4) > 0", "lag(total_equity, 4) > 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+
+    "PE_TTM": {
+      "family": "EARNINGS_MULTIPLE", "direction": "LOWER_BETTER",
+      "formula": "MARKET_CAP / sum4q(net_income)",
+      "requires": ["price", "shares_out", "net_income"],
+      "domain": ["sum4q(net_income) > 0"],
+      "out_of_domain": "WORST",
+      "out_of_domain_note": "A loss-making company must not rank as cheap because its multiple is undefined.",
+      "transform": "signed_log",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "PE_FWD": {
+      "family": "EARNINGS_MULTIPLE", "direction": "LOWER_BETTER",
+      "formula": "price / eps_fwd_1y",
+      "requires": ["price", "eps_fwd_1y"],
+      "domain": ["eps_fwd_1y > 0"],
+      "out_of_domain": "WORST",
+      "transform": "signed_log",
+      "coverage_note": "Consensus estimates thin out below BIST50. Resolves to MISSING there rather than falling back to trailing.",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "EV_EBITDA": {
+      "family": "EARNINGS_MULTIPLE", "direction": "LOWER_BETTER",
+      "formula": "EV / EBITDA_TTM",
+      "requires": ["price", "shares_out", "debt_st", "debt_lt", "cash_and_eq", "st_investments", "ebit", "depreciation_amortization"],
+      "domain": ["EBITDA_TTM > 0"],
+      "out_of_domain": "WORST",
+      "transform": "signed_log",
+      "priority_note": "The most used multiple on BIST and the one v1 could not compute at all, for want of a single field: depreciation_amortization.",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "EV_EBIT": {
+      "family": "EARNINGS_MULTIPLE", "direction": "LOWER_BETTER",
+      "formula": "EV / sum4q(ebit)",
+      "requires": ["price", "shares_out", "debt_st", "debt_lt", "cash_and_eq", "st_investments", "ebit"],
+      "domain": ["sum4q(ebit) > 0"],
+      "out_of_domain": "WORST",
+      "transform": "signed_log",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+
+    "P_FCF": {
+      "family": "CASHFLOW_MULTIPLE", "direction": "LOWER_BETTER",
+      "formula": "MARKET_CAP / FCF_TTM",
+      "requires": ["price", "shares_out", "cfo", "capex"],
+      "domain": ["FCF_TTM > 0"],
+      "out_of_domain": "WORST",
+      "transform": "signed_log",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "EV_SALES": {
+      "family": "CASHFLOW_MULTIPLE", "direction": "LOWER_BETTER",
+      "formula": "EV / sum4q(revenue)",
+      "requires": ["price", "shares_out", "debt_st", "debt_lt", "cash_and_eq", "st_investments", "revenue"],
+      "domain": ["sum4q(revenue) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "transform": "signed_log",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "P_CFO": {
+      "family": "CASHFLOW_MULTIPLE", "direction": "LOWER_BETTER",
+      "formula": "MARKET_CAP / sum4q(cfo)",
+      "requires": ["price", "shares_out", "cfo"],
+      "domain": ["sum4q(cfo) > 0"],
+      "out_of_domain": "WORST",
+      "transform": "signed_log",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+
+    "PB": {
+      "family": "ASSET_MULTIPLE", "direction": "LOWER_BETTER",
+      "formula": "MARKET_CAP / total_equity",
+      "requires": ["price", "shares_out", "total_equity"],
+      "domain": ["total_equity > 0"],
+      "out_of_domain": "WORST",
+      "transform": "signed_log",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "P_TANGIBLE_BOOK": {
+      "family": "ASSET_MULTIPLE", "direction": "LOWER_BETTER",
+      "formula": "MARKET_CAP / TANGIBLE_BOOK",
+      "requires": ["price", "shares_out", "total_equity", "intangibles_goodwill"],
+      "domain": ["TANGIBLE_BOOK > 0"],
+      "out_of_domain": "WORST",
+      "transform": "signed_log",
+      "applies_to": ["NONFIN", "HOLDING", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "EV_TO_ASSETS": {
+      "family": "ASSET_MULTIPLE", "direction": "LOWER_BETTER",
+      "formula": "EV / avg(total_assets)",
+      "requires": ["price", "shares_out", "debt_st", "debt_lt", "cash_and_eq", "st_investments", "total_assets"],
+      "domain": ["avg(total_assets) > 0"],
+      "out_of_domain": "MISSING",
+      "transform": "signed_log",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+
+    "DIVIDEND_YIELD": {
+      "family": "YIELD", "direction": "HIGHER_BETTER",
+      "formula": "sum4q(dividends_paid) / MARKET_CAP",
+      "requires": ["dividends_paid", "price", "shares_out"],
+      "domain": ["MARKET_CAP > 0"],
+      "out_of_domain": "MISSING",
+      "zero_note": "A zero dividend is a real observation, not a gap. Only a null dividends_paid is MISSING.",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    },
+    "FCF_YIELD": {
+      "family": "YIELD", "direction": "HIGHER_BETTER",
+      "formula": "FCF_TTM / MARKET_CAP",
+      "requires": ["cfo", "capex", "price", "shares_out"],
+      "domain": ["MARKET_CAP > 0"],
+      "out_of_domain": "MISSING",
+      "applies_to": ["NONFIN", "HOLDING", "GYO"]
+    },
+    "PAYOUT_RATIO": {
+      "family": "YIELD", "direction": "BAND",
+      "formula": "sum4q(dividends_paid) / sum4q(net_income)",
+      "requires": ["dividends_paid", "net_income"],
+      "domain": ["sum4q(net_income) > 0"],
+      "out_of_domain": "NOT_APPLICABLE",
+      "band": {"low": 0.15, "high": 0.60},
+      "band_note": "Paying nothing and paying out everything are both warnings; neither extreme is 'better'.",
+      "applies_to": ["NONFIN", "HOLDING", "GYO", "BANK", "FINANCIAL", "INSURANCE"]
+    }
+  }
+}
