@@ -12,6 +12,31 @@ pip install pytest
 pytest -q          # 105 passed
 ```
 
+
+## Total Rasyo 2.0 — aktif yön
+
+2026-09-23 itibarıyla proje yalnız bir rasyo motoru olarak değil, **PIT güvenli,
+kesitsel olarak kalibre edilmiş bir yatırım-sinyali sistemi** olarak geliştiriliyor.
+Kullanıcının InvestingPro+ üyeliği artık mevcut ve Pro+; ham veri zenginleştirme,
+forward expectations/revisions, valuation challenger/ensemble ve bağımsız
+benchmark katmanı olarak kullanılacak.
+
+Yeni mimaride:
+
+- `Raw Alpha` araştırma/model skoru olarak saklanır.
+- `Total Rasyo 0–100` Raw Alpha'nın BIST içindeki kesitsel rank/kalibrasyonudur.
+- `Confidence 0–100` ayrı tutulur.
+- `Risk 0–100` ayrı tutulur.
+- Quality, Valuation, Growth, Expectations, Momentum ve Fundamental Trend bağımsız faktör aileleridir.
+- InvestingPro hazır skorları Total'e kör biçimde eklenmez; katkıları backtest/ablation ile kanıtlanır.
+- Historical testlerde point-in-time veri disiplini kırılmaz.
+
+**Yaşayan uygulama planı:** [ROADMAP.md](ROADMAP.md)  
+**Matematik + InvestingPro+ mimarisi:** [docs/TOTAL_RASYO_2_0_MIMARI.md](docs/TOTAL_RASYO_2_0_MIMARI.md)
+
+> Projede bundan sonra bir iş, ilgili `TR2-XXX` maddesi ve kanıtı
+> `ROADMAP.md` içinde güncellenmeden `DONE` sayılmaz.
+
 ## Neden ayrı bir motor
 
 Bu katman, Total Rasyo projesinin v1 rasyo katmanında **ölçülmüş** üç kusuru
