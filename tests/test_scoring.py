@@ -21,7 +21,7 @@ from ratio_engine.scoring import (
     RESULT_INSUFFICIENT_COVERAGE, RESULT_OK, RatioObservation, ScoringError,
     compute_ratio_weights, score_universe,
 )
-from tests._fixtures import build_set, simple_ratio
+from tests._fixtures import build_set, real_set, simple_ratio
 
 
 FAMILIES = {"FAM_A": "P1", "FAM_B": "P1", "FAM_C": "P2"}
@@ -257,3 +257,30 @@ def test_ok_observation_requires_a_finite_value():
 def test_invalid_status_is_rejected():
     with pytest.raises(ScoringError):
         RatioObservation("T1", "R1", 1.0, "WHATEVER")
+
+
+def test_an_extreme_outlier_does_not_crash_the_whole_universe():
+    """Found on real BIST data: score_universe died with OverflowError.
+
+    The logistic was written as 1/(1+exp(-z)).  A value far below the pool
+    median makes z very negative, exp(-z) overflows a float, and the exception
+    escapes - so one pathological company takes down the scoring of every
+    other company in the run.
+
+    The observed case was CFO_TO_TOTAL_DEBT over 25 names: median 0.30, one
+    reading at -3180.  Its winsor is 0.02, and 2% of 25 names rounds down to
+    trimming nothing, so winsorisation cannot be relied on to keep the
+    exponent in range.  The outlier belongs at the bottom of the pool, not in
+    a traceback.
+    """
+    from ratio_engine.scoring import _relative_scores
+
+    spec = real_set().specs["CFO_TO_TOTAL_DEBT"]
+    pool = {f"T{i}": 0.30 + i * 0.01 for i in range(24)}
+    pool["WORSTCO"] = -3180.0
+
+    scores = _relative_scores(spec, pool)
+
+    assert len(scores) == 25
+    assert all(0.0 <= s <= 1.0 for s in scores.values())
+    assert scores["WORSTCO"] == min(scores.values())

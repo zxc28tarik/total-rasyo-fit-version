@@ -164,6 +164,22 @@ def _band_absolute(spec: RatioSpec, value: float) -> float | None:
     return max(0.05, 0.80 - 0.50 * (excess / half))
 
 
+def _logistic(z: float) -> float:
+    """Logistic of z, written so a far-out value cannot overflow a float.
+
+    The naive 1/(1+exp(-z)) overflows once z drops below about -709, which a
+    real cross-section reaches easily: CFO_TO_TOTAL_DEBT was observed at -3180
+    against a pool median of 0.30.  Winsorisation is no defence - a 2% trim
+    over 25 names rounds down to trimming nothing.  Evaluating the negative
+    branch as exp(z)/(1+exp(z)) underflows to 0.0 instead, which puts the
+    company at the bottom of the pool, where it belongs.
+    """
+    if z >= 0.0:
+        return 1.0 / (1.0 + math.exp(-z))
+    e = math.exp(z)
+    return e / (1.0 + e)
+
+
 def _relative_scores(spec: RatioSpec, pool: Mapping[str, float]) -> dict[str, float]:
     """Robust cross-sectional score in [0, 1] for one ratio over one pool.
 
@@ -181,7 +197,7 @@ def _relative_scores(spec: RatioSpec, pool: Mapping[str, float]) -> dict[str, fl
     if mad > 0:
         scale = MAD_SCALE * mad
         return {
-            t: 1.0 / (1.0 + math.exp(-((v - centre) / scale)))
+            t: _logistic((v - centre) / scale)
             for t, v in zip(tickers, oriented)
         }
 
