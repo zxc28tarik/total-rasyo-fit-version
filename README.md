@@ -9,7 +9,7 @@ bağımsız ağırlıklandırma.
 
 ```bash
 pip install pytest
-pytest -q          # 63 passed
+pytest -q          # 64 passed
 ```
 
 ## Neden ayrı bir motor
@@ -156,8 +156,9 @@ Kapsam eşiğinin altında skor `None` döner ve durum `YETERSIZ_KAPSAM` olur �
 ## Doğrulama durumu
 
 ```
-63 test                          passed
-Mutasyon testi                   5/5 yakalandı
+64 test                          passed
+Mutasyon testi (rasyo katmanı)   5/5 yakalandı
+Mutasyon testi (trend+likidite)  4/4 yakalandı
 Üçüncü parti bağımlılık          yok
 PostgreSQL migration             canlı veritabanında HENÜZ KOŞULMADI
 ```
@@ -165,6 +166,14 @@ PostgreSQL migration             canlı veritabanında HENÜZ KOŞULMADI
 Beş mutasyonun her biri en az bir testi kırdı: aile normalizasyonu kaldırıldı,
 `NOT_APPLICABLE` paydada bırakıldı, yetersiz kapsam sessizce 0.0 döndü,
 `BEST`/`WORST` ölçülmüş sayılmadı, bağ çözümü giriş sırasına bırakıldı.
+
+Trend ve likidite katmanında dört mutasyon daha koşuldu ve dördü de en az bir
+testi kırdı: çeyrek indeksi liste sırasına indirgendi, yetersiz çeyrek sayısı
+sessizce 0.0 döndü, `OK` olmayan statüler regresyona alındı, `as_of` sonrası
+barlar pencereye sızdı. Üçüncüsü ilk koşuda **kaçtı** — `RatioOutcome`'ın kendi
+değişmezi `BEST` satırlarını zaten eliyordu, dolayısıyla statü kapısı test
+açısından ölüydü. Kapı korundu ve eksik test yazıldı
+(`test_a_non_ok_status_is_skipped_even_when_it_carries_a_value`).
 
 `sql/043_ratio_set_v2.sql` yalnızca yapısal olarak kontrol edildi; gerçek bir
 PostgreSQL üzerinde çalıştırılması gerekiyor.

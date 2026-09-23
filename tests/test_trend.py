@@ -144,3 +144,21 @@ def test_public_surface_exports_the_new_primitives():
     assert ratio_engine.adv_try is not None
     assert "compute_trend" in ratio_engine.__all__
     assert "adv_try" in ratio_engine.__all__
+
+
+def test_a_non_ok_status_is_skipped_even_when_it_carries_a_value():
+    # RatioOutcome's own invariant forbids a valued BEST, so a stand-in is the
+    # only way to prove the status gate (K21) is load-bearing rather than a
+    # redundant echo of that invariant.
+    class _Outcome:
+        ratio_name = "ROE"
+        status = "BEST"
+        value = 99.0
+        period_end = date(2025, 12, 31)
+
+    t = compute_trend(
+        list(rising_roe_outcomes()) + [_Outcome()], "ROE", date(2025, 12, 31)
+    )
+    assert t.status == "OK"
+    assert t.level == pytest.approx(0.17)
+    assert t.quarters_used == 8
