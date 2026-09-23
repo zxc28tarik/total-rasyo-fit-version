@@ -67,3 +67,32 @@ def _ols_slope(points: Sequence[tuple[int, float]]) -> float | None:
     sxy = sum((p[0] - mean_x) * (p[1] - mean_y) for p in points)
     slope = sxy / sxx
     return slope if _is_finite(slope) else None
+
+
+def _median(values: Sequence[float]) -> float:
+    ordered = sorted(values)
+    n = len(ordered)
+    mid = n // 2
+    if n % 2 == 1:
+        return ordered[mid]
+    return (ordered[mid - 1] + ordered[mid]) / 2.0
+
+
+def _residual_mad(points: Sequence[tuple[int, float]], slope: float) -> float:
+    """Median absolute deviation of the residuals around the fitted line.
+
+    Median/MAD rather than RMSE, for the same reason scoring uses them (K7):
+    one restated quarter should not decide whether a company looks stable.
+    Returned in raw ratio units and oriented LOWER_BETTER by the caller (K19).
+
+    Deliberately not imported from ``scoring``: that would point this module
+    at the layer above it.  The duplication is three lines and the coupling
+    would be permanent.
+    """
+    n = len(points)
+    mean_x = sum(p[0] for p in points) / n
+    mean_y = sum(p[1] for p in points) / n
+    intercept = mean_y - slope * mean_x
+    residuals = [p[1] - (slope * p[0] + intercept) for p in points]
+    centre = _median(residuals)
+    return _median([abs(r - centre) for r in residuals])

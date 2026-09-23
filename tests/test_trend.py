@@ -60,3 +60,22 @@ def test_gap_in_quarters_does_not_steepen_the_slope():
 def test_slope_needs_two_distinct_x_values():
     assert _ols_slope([(2, 1.0)]) is None
     assert _ols_slope([(2, 1.0), (2, 3.0)]) is None
+
+
+from ratio_engine.trend import _residual_mad
+
+
+def test_perfect_line_has_zero_residual_spread():
+    points = [(0, 1.0), (1, 1.5), (2, 2.0), (3, 2.5)]
+    assert _residual_mad(points, slope=0.5) == pytest.approx(0.0)
+
+
+def test_noisy_series_has_larger_spread_than_clean_one():
+    clean = [(0, 1.0), (1, 1.1), (2, 1.2), (3, 1.3)]
+    noisy = [(0, 1.0), (1, 2.0), (2, 0.5), (3, 1.3)]
+    assert _residual_mad(noisy, slope=0.1) > _residual_mad(clean, slope=0.1)
+
+
+def test_residual_spread_is_never_negative():
+    points = [(0, -5.0), (1, 3.0), (2, -2.0)]
+    assert _residual_mad(points, slope=0.0) >= 0.0
