@@ -10,9 +10,27 @@ asla bağlanmaz, bağımlılık tek yönlüdür: research → ratio_engine.
 ```bash
 pip install yfinance
 python research/harvest_annual.py      # veriyi cek (~90 hisse, ~6 dk)
-python research/annual_ic.py           # 6 aylik rank-IC
+python research/monthly_ic.py          # ASIL OLCUM: aylik kesit + Newey-West
+python research/annual_ic.py           # yillik kesit (4 gozlem, zayif)
 python research/ls_spread.py           # ilk10/son10 getiri farki
+python research/board_run.py           # karsilastirma tahtasi
 ```
+
+## Neden aylik, neden Newey-West
+
+`annual_ic.py` yilda bir kesit olcer, yani dort gozlem — hicbir sey soyleyemez
+(t=1.21). Ama kompozit yalniz temelden ibaret degil: **her degerleme carpani
+fiyati tasir ve fiyat her gun degisir.** Dolayisiyla her ay gercekten farkli
+bir kesittir ve 4 yerine 36 tane vardir. `monthly_ic.py` bunu olcer.
+
+Bedeli: 6 aylik getiriyi aylik ornekleyince ardisik gozlemler pencerelerinin
+beste dordunu paylasir. Ortalama hala yansiz, ama naif standart hata cok
+kucuktur ve anlamliligi **iki kat abartir**. t bu yuzden Newey-West ile
+duzeltilir; ikisi de yazdirilir, cunku aralarindaki fark isin ta kendisidir.
+
+Gecikme secimi: 5 = getiri cakismasi. Bilanco 12 ay sabit kaldigi icin daha
+uzun gecikmeler de sinanir. n=36'da L=23 asiri parametrelidir, savunulabilir
+aralik L=5..11'dir.
 
 Veri önbellekleri (`research/*.json`) git'e girmez — çekilen veri, kaynak değil.
 
