@@ -1,560 +1,524 @@
-# TOTAL RASYO 2.0 — Matematik ve InvestingPro+ Mimari Kararı
+# TOTAL RASYO 2.0 — GREENFIELD MİMARİ
 
-**Durum:** KABUL EDİLEN YENİ YÖN  
+**Durum:** AKTİF TASARIM OTORİTESİ  
 **Tarih:** 2026-09-23  
-**Başlangıç HEAD:** `be6217600eb69ca7248f72b56400eae03c2d6fe4`  
-**Kapsam:** Total Rasyo Fit Version — skor matematiğinin yeniden kurulması ve InvestingPro+ veri avantajının sisteme eklenmesi.
+**Başlangıç ilkesi:** Mevcut sistemden hiçbir matematiksel karar, oran, ağırlık, eşik, modül veya veri dönüşümü otomatik olarak devralınmaz.
 
-> Bu belge bir "puanları yükseltme" çalışması değildir. Amaç, 0–100 sayısının gerçekten gelecekteki göreli performansı sıralayan, sektörler arasında adil, point-in-time güvenli ve tarihsel olarak doğrulanabilir bir yatırım sinyaline dönüşmesidir.
-
----
-
-## 1. Mevcut sağlam temel korunacak
-
-Bu repo eski Total Rasyo matematiğinin bazı temel kusurlarını zaten gidermiş durumda ve bu işler çöpe atılmayacak:
-
-- 67 rasyo / 19 aile / 7 pillar.
-- Sektör bazlı `applies_to`.
-- `OK / MISSING / BEST / WORST / NOT_APPLICABLE` ayrımı.
-- Explicit coverage ve fail-closed davranış.
-- Rasyo sayısından bağımsız family/pillar ağırlıklandırması.
-- Mutlak `good_count` yerine ağırlıklı `good_ratio`.
-- Medyan/MAD tabanlı robust kesitsel skorlama.
-- Quality / Growth / Value kompozitlerinin birbirinden ayrılması.
-- Tarihsel araştırma ve IC ölçüm düzeneği.
-
-Yani Total Rasyo 2.0, **rasyo motorunu yıkıp yeniden yazmak değil; onun üstündeki yatırım-sinyali matematiğini yeniden kurmaktır.**
+> Total Rasyo 2.0 eski sistemin düzeltilmiş sürümü değil; aynı problemi daha doğru çözmek için sıfırdan tasarlanan yeni motordur.
 
 ---
 
-## 2. 2026-09-23 araştırma baseline'ı
+## 1. Greenfield kuralı
 
-Yeni mimarinin başarısı aşağıdaki bugünkü sonuçlara göre ölçülecek. Bunlar nihai sonuç değil, başlangıç baseline'ıdır.
+Mevcut repository üç şey için kullanılabilir:
 
-Mevcut repo araştırmalarında:
+1. tarihsel araştırma kanıtı,
+2. yeniden kullanılabilecek veri erişimi / test fikri,
+3. karşılaştırma için legacy baseline.
 
-- Aylık kesit / 6 aylık ileri getiri:
-  - Value mean IC yaklaşık **+0.136**, Newey-West t yaklaşık **+2.03**, pozitif ay oranı %78.
-  - Quality mean IC yaklaşık **+0.092**, Newey-West t yaklaşık **+2.08**, pozitif ay oranı %75.
-  - Growth mean IC yaklaşık **+0.004**, Newey-West t yaklaşık **+0.05**, pozitif ay oranı %44.
-- Mevcut 12 aylık seçim backtest'i:
-  - Strateji yaklaşık **+%5.5 net**.
-  - Aynı evren yaklaşık **+%9.2**.
-  - Strateji benchmarkın yaklaşık **3.7 puan** gerisinde.
-- Seçimlerin pozitif olma oranı yaklaşık **%48**, evrenin pozitif olma oranı da yaklaşık **%48**.
-- Top-10-by-rank yaklaşımı mevcut kısa örnekte güvenilir üstünlük göstermedi.
-- Mutlak score barları ve holding period değişimleri arasında geniş oynaklık var; mevcut örnek boyutu bunlardan sağlam bir stratejik karar çıkarmak için yetersiz.
+Bunların dışında hiçbir parça "korunacak" kabul edilmez.
 
-**Sonuç:** Rasyo motorunda sinyal izi var; sorun yalnız veri eksikliği değil. Üst seviye faktör birleştirme, ölçekleme, seçim, güven ve risk matematiği yeniden tasarlanmalıdır.
+Her legacy bileşeni şu dört sonuçtan birini alır:
 
----
+- KEEP_AS_IS
+- PORT_WITH_CHANGES
+- REWRITE
+- DELETE
 
-## 3. Total Rasyo 2.0'ın temel ilkesi
-
-Eski yaklaşım:
-
-```
-çeşitli 0..1 modüller
-    ↓
-sabit ağırlıklı ortalama
-    ↓
-0..100
-```
-
-Yeni yaklaşım:
-
-```
-KAP + InvestingPro+ + piyasa verisi
-    ↓
-kanonik ve PIT güvenli ham özellikler
-    ↓
-sektör/ekonomik aile içinde robust normalizasyon
-    ↓
-bağımsız faktör aileleri
-    ↓
-walk-forward doğrulanmış ve kısıtlı faktör birleşimi
-    ↓
-Raw Alpha
-    ↓
-BIST kesitsel rank / calibrated percentile
-    ↓
-TOTAL RASYO 0–100
-```
-
-Paralel olarak ayrıca:
-
-```
-Coverage + veri tazeliği + model anlaşmazlığı → CONFIDENCE 0–100
-Volatilite + drawdown + likidite + tail risk → RISK 0–100
-```
-
-**Alpha, confidence ve risk aynı sayı içinde eritilmeyecek.**
+Karar ancak ekonomik mantık + matematik + veri semantiği + PIT güvenliği + test/backtest sonucu birlikte incelendikten sonra verilir.
 
 ---
 
-## 4. 0–100'ün yeni anlamı
+## 2. Ana hedef
 
-Total Rasyo 2.0'da 0–100, "teorik kusursuzluğun yüzdesi" olmayacak.
+Total Rasyo 2.0'ın görevi:
 
-Hedef semantik:
+**Bir şirketin gelecekteki sektör/piyasa düzeltilmiş göreli getiri potansiyelini sıralamak.**
 
-- 100 ≈ o as-of tarihinde yatırım evrenindeki en güçlü birleşik sinyal.
-- 90 ≈ yaklaşık üst %10.
-- 50 ≈ evren medyanı.
-- 10 ≈ yaklaşık alt %10.
-- 0 ≈ evrenin en zayıf uçları.
+Dolayısıyla ana başarı ölçüsü:
 
-Üretimde iki skor birlikte saklanacak:
-
-1. **Raw Alpha / model score** — araştırma, IC ve backtest için.
-2. **Total Rasyo 0–100 display rank** — kullanıcının yorumlayacağı ortak ölçek.
-
-Böylece 0–100 tamamı kullanılan bir ölçek olur; fakat model matematiği kozmetik olarak "yüksek puan üretmeye" zorlanmaz.
+- skorun yüksek görünmesi değil,
+- geçmiş finansalların iyi açıklanması değil,
+- 100'e ulaşılması değil,
+- forward out-of-sample rank IC ve ekonomik olarak uygulanabilir spread üretmesidir.
 
 ---
 
-## 5. Faktör aileleri
+## 3. Üç ayrı çıktı
 
-Üretim seviyesinde eski M1/M2/M3/Ek1/Ek4/Ek9 adları belirleyici mimari olmayacak. Uyumluluk/izleme için tutulabilirler.
+Yeni motor tek sayı üretmeye zorlanmaz.
 
-### 5.1 Quality
+### Alpha
+Şirketin göreli ileri getiri sinyali.
 
-Amaç: Şirketin bugünkü ekonomik/muhasebesel kalitesini ölçmek.
+### Confidence
+Bu sinyalin veri ve model açısından ne kadar güvenilir olduğu.
 
-Alt eksenler:
+### Risk
+Bu fırsatın volatilite, drawdown, likidite ve tail-risk profili.
 
-- Profitability
-- Cash Flow Quality
-- Balance Sheet Strength
-- Capital Efficiency
-- Operating Efficiency
-- Earnings Quality
-- Accounting / distress quality
+Üretim çıktısı:
 
-Mevcut 67 rasyo motoru bunun ana kaynağıdır.
+```
+raw_alpha
+total_rasyo_0_100
+confidence_0_100
+risk_0_100
+```
 
-**Kural:** İyi şirketin puanı "artık daha da iyileşmiyor" diye düşürülemez.
+Risk veya confidence alpha'nın içine gizlenmez.
 
-### 5.2 Fundamental Trend
+---
 
-Quality seviyesinden ayrı tutulur.
+## 4. 0–100 semantiği
 
-Ölçülebilecek bileşenler:
+Total Rasyo 0–100 teorik kusursuzluk yüzdesi değildir.
 
-- 1Q değişim
-- 4Q değişim
-- 8Q trend
-- marj eğimi
-- nakit dönüşümü eğimi
-- bilanço iyileşmesi/kötüleşmesi
+Hedef:
 
-Trend bir **bonus/erken değişim sinyali**dir; quality seviyesinin yerine geçmez.
+```
+total_rasyo_0_100 = calibrated cross-sectional rank(raw_alpha)
+```
 
-### 5.3 Valuation
+Yaklaşık yorum:
 
-Eski M2 mantığı kaldırılacak.
+- 100: o tarihte evrendeki en güçlü sinyallerin ucu
+- 90: üst yaklaşık %10
+- 50: medyan
+- 10: alt yaklaşık %10
+- 0: en zayıf uç
 
-Valuation yalnızca değerlemeyi ölçer:
+Raw alpha ayrıca saklanır ve bütün araştırma raw alpha üzerinden doğrulanır.
+
+---
+
+## 5. Veri kaynakları
+
+### KAP
+Historical point-in-time finansal gerçekliğin ana otoritesi.
+
+### Piyasa verisi
+Fiyat, hacim, endeks/sektör getirileri, volatilite, beta, liquidity.
+
+### InvestingPro+
+Kullanıcının Pro+ üyeliği aktif.
+
+Rolleri:
+
+- current data enrichment
+- forward estimates / revisions
+- metric feature factory
+- Fair Value challenger / ensemble input
+- Financial Health ve benzeri skorları bağımsız benchmark/challenger
+- ileri tarihler için düzenli snapshot üretimi
+
+**Yasak:** InvestingPro'nun hazır puanını doğrudan Total Rasyo ağırlığına koymak.
+
+---
+
+## 6. PIT kuralı
+
+Her feature aşağıdaki bilgiye sahip olmalıdır:
+
+```
+value
+period_end
+published_at / available_at
+source
+source_snapshot_at
+revision_state
+provenance
+```
+
+Historical backtest:
+
+```
+feature.available_at <= as_of
+```
+
+olmadan feature kullanamaz.
+
+Bugün Pro+ ekranında görülen geçmiş değer otomatik olarak historical PIT veri değildir.
+
+---
+
+## 7. Factor discovery yaklaşımı
+
+Faktör aileleri başlangıç hipotezidir; kutsal modüller değildir.
+
+İlk araştırma aileleri:
+
+- Quality
+- Valuation
+- Growth
+- Expectations / Revisions
+- Fundamental Momentum
+- Price Momentum / Residual Alpha
+- Capital Allocation
+- Earnings Quality / Accounting Risk
+- Liquidity / Market Microstructure
+- Risk
+
+Bir aile forward bilgi taşımıyorsa silinir.
+
+Bir feature başka feature ile aynı bilgiyi taşıyorsa birleştirilir veya silinir.
+
+---
+
+## 8. Finansal oran politikası
+
+Eski 67 oran otomatik devralınmaz.
+
+Her oran için sıfırdan audit:
+
+```
+ekonomik tez
+formül doğruluğu
+işaret yönü
+sektör uygulanabilirliği
+pay/payda semantiği
+TTM / point-in-time kullanımı
+enflasyon etkisi
+outlier davranışı
+coverage
+forward IC
+incremental IC
+redundancy
+```
+
+Sınavı geçmeyen oran silinir.
+
+Yeni Pro+ alanı daha iyi bir feature veriyorsa eski oran sırf geçmişte kullanıldı diye korunmaz.
+
+---
+
+## 9. Normalizasyon
+
+Tek bir normalizasyon her feature'a uygulanmaz.
+
+Aday yöntemler:
+
+- sector/peer percentile
+- median/MAD robust z-score
+- rank-gaussian
+- historical own-company percentile
+- sector-neutral residual
+- economically justified hard transform
+
+Her feature'ın dönüşümü forward test ile seçilir.
+
+Mutlak eşik yalnız ekonomik olarak zamanlar ve sektörler arasında anlamı sabitse kullanılabilir.
+
+---
+
+## 10. Quality
+
+Quality yalnız geçmiş seviyeyi ölçer.
+
+Aday temalar:
+
+- profitability
+- return on capital
+- balance-sheet strength
+- cash-flow conversion
+- earnings quality
+- operating efficiency
+- financial distress
+- accounting manipulation risk
+
+Stabil yüksek kalite, "iyileşmiyor" diye cezalandırılmaz.
+
+---
+
+## 11. Fundamental Momentum
+
+Quality'den ayrı faktördür.
+
+Adaylar:
+
+- QoQ change
+- YoY change
+- 8Q robust slope
+- acceleration
+- margin inflection
+- FCF conversion inflection
+- leverage improvement/deterioration
+- estimate-linked fundamental surprise
+
+Seviye ve değişim aynı skora zorla karıştırılmaz.
+
+---
+
+## 12. Valuation
+
+Valuation yalnız "fiyata göre ekonomik değer" problemidir.
+
+Aday kaynaklar:
 
 - relative multiples
-- earnings / book / sales / cash-flow multiples
+- historical relative multiples
+- sector-relative multiples
+- FCF / earnings yield
 - own fair-value models
-- InvestingPro Fair Value ailesi
-- mevcutsa analyst target / consensus gibi bağımsız kaynaklar
+- InvestingPro Fair Value
+- consensus/target data mevcut ve PIT güvenli ise
 
-Fiyatın yakın dönemde yükselmiş olması "ucuzluk" sinyalini otomatik olarak silmez.
+Fiyatın yükselmesi kendi başına valuation sinyalini düşürmez; bu momentum tarafında değerlendirilir.
 
-### 5.4 Growth
+---
 
-Büyüme kaliteden ayrı tutulur:
+## 13. Expectations / Revisions
 
-- revenue growth
-- EPS growth
-- EBITDA growth
-- FCF growth
-- 3Y / 5Y CAGR
-- sektör-nötr büyüme
-
-Mevcut baseline'da Growth IC zayıf olduğu için bu faktör **kanıtlanmadan yüksek ağırlık alamaz**.
-
-### 5.5 Expectations / Revisions
-
-InvestingPro+ ile eklenmesi hedeflenen kritik yeni eksen.
+Pro+ üyeliğinin en önemli potansiyel katkılarından biri.
 
 Adaylar:
 
 - forward EPS
 - forward revenue
 - forward EBITDA
-- 1M / 3M estimate revision
+- 1M / 3M revision
+- dispersion
 - earnings surprise
-- consensus change
-- mevcutsa analyst target revision
+- target/consensus revision
 
-Örnek:
+Historical kullanımı yalnız gerçek snapshot geçmişi varsa mümkündür.
 
-```
-revision = (EPS_fwd_now / EPS_fwd_3m_ago) - 1
-```
+---
 
-Bu eksen şirketin yalnız geçmişini değil, piyasanın temel beklentisinin hangi yönde değiştiğini ölçer.
-
-### 5.6 Momentum / Residual Alpha
-
-Valuation'dan tamamen ayrı tutulur.
+## 14. Momentum / Residual Alpha
 
 Adaylar:
 
-- 20d relative momentum
-- 63d relative momentum
-- 126d relative momentum
-- sector-adjusted momentum
-- market/sector residual alpha
-- trend persistence
+- 20d
+- 63d
+- 126d
+- 252d
+- sector relative
+- market relative
+- residual momentum
+- momentum quality / consistency
+- reversal controls
 
-Aynı bilgi iki farklı modülde tekrar ağırlıklandırılmayacak. Korelasyon ve redundancy kontrolü yapılacak.
-
----
-
-## 6. Confidence ayrı bir eksendir
-
-Eski tür:
-
-```
-güven düşük → sinyali 0.50'ye çek
-```
-
-yaklaşımı yeni tasarımda kullanılmayacak.
-
-Örnek:
-
-```
-Valuation = 91
-Confidence = 43
-```
-
-Bu ikisi ayrı gerçektir.
-
-Confidence bileşenleri:
-
-- veri coverage
-- veri freshness
-- model availability
-- source agreement
-- valuation dispersion
-- InvestingPro vs own-model disagreement
-- point-in-time provenance strength
-- küçük peer group cezası
-- stale forecast cezası
-
-Confidence alpha'yı yok etmez; gerekirse **etkin faktör ağırlığını** azaltır veya üretim kararına ayrı kapı koyar.
+Valuation ile tek bir FOLLOW formülünde birleştirilmez.
 
 ---
 
-## 7. Risk ayrı bir eksendir
+## 15. Confidence
 
-Volatilite artık "şirket kalitesi" veya "ucuzluk" puanını doğrudan azaltmayacak.
+Confidence ayrı modeldir.
 
-Risk adayları:
+Aday girdiler:
+
+- feature coverage
+- source coverage
+- data freshness
+- PIT provenance quality
+- peer-group size
+- valuation-model dispersion
+- source disagreement
+- estimate age
+- schema stability
+
+Düşük confidence, sinyal değerini mekanik olarak 0.50'ye çekmek zorunda değildir.
+
+---
+
+## 16. Risk
+
+Adaylar:
 
 - realized volatility
 - downside volatility
-- max drawdown
-- liquidity / ADV
-- beta
-- gap risk
-- tail-risk ölçüleri
-- leverage/distress risk
-
-Çıktı:
-
-- `TOTAL_RASYO_0_100`
-- `CONFIDENCE_0_100`
-- `RISK_0_100`
-
-Gerekirse bunlardan ayrıca `RISK_ADJUSTED_TOTAL_RASYO` türetilebilir; fakat ham alpha saklanır.
-
----
-
-## 8. InvestingPro+ rolü
-
-Kullanıcının InvestingPro+ üyeliği **2026-09-23 itibarıyla edinildi**.
-
-InvestingPro+ projeye "hazır skoru kopyalama" şeklinde eklenmeyecek.
-
-Dört rolü vardır:
-
-### 8.1 Veri zenginleştirme
-
-Pro+ export'larından erişilebildiği ölçüde:
-
-- uzun tarihsel finansal seri
-- forward estimates
-- estimate revisions
-- earnings / surprise alanları
-- gelişmiş finansal metrikler
-- Altman Z
-- Beneish M
-- diğer doğrulanabilir export alanları
-
-kanonik şemaya alınır.
-
-### 8.2 Valuation challenger / ensemble
-
-InvestingPro Fair Value, bizim değerleme motorunun yerine geçmez.
-
-```
-Own Valuation
-InvestingPro Fair Value
-Other independent valuation evidence
-```
-
-ayrı tutulur.
-
-Agreement/disagreement hem feature hem confidence girdisi olabilir.
-
-### 8.3 Independent benchmark
-
-InvestingPro Financial Health / ilgili hazır skorlar doğrudan Total Rasyo'ya sabit yüzdeyle eklenmez.
-
-Ama:
-
-- kendi Quality faktörümüzle karşılaştırılır,
-- disagreement üretilir,
-- challenger model olarak backtest edilir.
-
-Bu, double counting riskini azaltır.
-
-### 8.4 Feature factory
-
-Pro+ tarafındaki 1.200+ metrik doğrudan modele doldurulmaz.
-
-Hedef süreç:
-
-```
-1200+ raw field
-→ availability / semantics / PIT audit
-→ ekonomik kümelendirme
-→ redundancy / correlation filtresi
-→ coverage filtresi
-→ univariate IC ve stability
-→ incremental IC / orthogonality
-→ yaklaşık 15–40 üretim faktörü
-```
-
-Sayının yüksek olması kalite değildir. Sadece **daha iyi aday havuzu** sağlar.
-
----
-
-## 9. InvestingPro+ veri alım kuralı
-
-Mevcut resmi ürün bilgisi ve repo araştırmasına göre aboneliğin programatik API erişimi sunduğu varsayılmayacak.
-
-İlk güvenli tasarım:
-
-```
-manual CSV/XLSX export
-→ immutable raw snapshot
-→ SHA256
-→ export timestamp
-→ source metadata
-→ schema fingerprint
-→ canonical field mapper
-→ feature store
-```
-
-**Gerçek export görülmeden kolon isimleri uydurulmayacak.**
-
-Her raw export sonradan değiştirilemez şekilde saklanmalı; dönüştürülmüş veri raw kaynağa geri izlenebilir olmalıdır.
-
----
-
-## 10. Point-in-time (PIT) kuralı
-
-InvestingPro'nun bugün gösterdiği tarihsel bir metrik, otomatik olarak "o tarihte yatırımcı tarafından biliniyordu" kabul edilemez.
-
-Backtest için:
-
-- KAP publication timestamp ana otorite olmaya devam eder.
-- Pro+ export'ları alındıkları tarihten itibaren güvenli forward snapshot olarak kullanılabilir.
-- Historical Pro+ alanların revision/restatement riski ayrıca işaretlenir.
-- Availability timestamp bilinmiyorsa geçmişe sızdırılmaz.
-- Analyst/estimate verileri snapshot tarihi olmadan historical backteste sokulmaz.
-
-Amaç yüksek görünen sahte IC değil, **gerçek zamanlı uygulanabilir IC**dir.
-
----
-
-## 11. Normalizasyon
-
-Aynı ekonomik büyüklükler şirketler arasında mutlak eşiklerle kör biçimde puanlanmayacak.
-
-Tercih sırası:
-
-1. Sektör/peer cross-sectional percentile.
-2. Robust z-score (median/MAD).
-3. Gerekliyse sektör-nötr residualization.
-4. Sadece ekonomik anlamı gerçekten sabit olan değişkenlerde mutlak anchor.
-
-Banka, GYO, holding ve sanayi şirketleri aynı keyfi eşiklerle ölçülmez.
-
----
-
-## 12. Model matematiği
-
-İlk kavramsal form:
-
-```
-RawAlpha =
-    βQ * Quality
-  + βV * Valuation
-  + βG * Growth
-  + βE * Expectations
-  + βM * Momentum
-  + βF * FundamentalTrend
-  + validated_interactions
-```
-
-Ancak `β` değerleri elle kutsal sayı olarak belirlenmeyecek.
-
-Öğrenme:
-
-- expanding / rolling walk-forward
-- yalnız geçmişte mevcut bilgi
-- bounded weights
-- shrinkage / regularization
-- correlated factor penalty
-- minimum coverage gates
-- sektör stabilitesi kontrolü
-
-67 rasyonun her birine ayrı fit ağırlığı vermek yasaktır. Mevcut repo prensibi korunur: model serbestliği faktör/eksen seviyesinde tutulur.
-
----
-
-## 13. Ana optimizasyon hedefi
-
-Model "yüksek Total Rasyo" üretmek için optimize edilmez.
-
-Ana araştırma hedefleri:
-
-- Spearman rank IC
-- IC mean
-- ICIR
-- Newey-West adjusted significance
-- positive-IC month ratio
-- top-minus-bottom spread
-- top decile excess return
-- hit rate
 - drawdown
-- turnover
-- transaction-cost sonrası sonuç
-- sektör ve rejim stabilitesi
+- beta
+- liquidity
+- gap risk
+- tail risk
+- balance-sheet distress
+- concentration/event risk
 
-Ayrıca **ablation** zorunludur:
-
-```
-model - Quality
-model - Valuation
-model - Momentum
-model - Pro+ fields
-...
-```
-
-Bir faktör çıkarılınca performans bozulmuyorsa o faktör üretimde yer almamalıdır.
+Risk ayrıca raporlanır.
 
 ---
 
-## 14. Seçim stratejisi skor modelinden ayrılacak
+## 17. InvestingPro+ feature factory
 
-Bugünkü araştırma şunu gösteriyor: pozitif IC, otomatik olarak başarılı Top-10 portföy anlamına gelmiyor.
+1.200+ alanın tamamını modele sokmak yasaktır.
 
-Bu nedenle:
+Akış:
 
-**Score model** ve **portfolio/selection policy** iki farklı bileşendir.
+```
+raw export
+→ immutable snapshot
+→ schema/profile
+→ canonical mapping
+→ semantic families
+→ coverage/PIT audit
+→ redundancy clustering
+→ univariate IC
+→ incremental IC
+→ rolling stability
+→ OOS survival
+→ production feature set
+```
 
-Önce alpha sıralamasının geçerliliği kanıtlanır.
+Üretim setinin büyüklüğü önceden belirlenmez; kanıt ne kadarını destekliyorsa o kadar kalır.
 
-Sonra ayrı test edilir:
+---
 
-- top-N
-- percentile threshold
-- absolute raw-alpha threshold
-- both-factor gates
-- confidence gates
-- sector caps
-- liquidity constraints
+## 18. Model öğrenimi
+
+Amaç lineer model kullanmak değildir; amaç **overfit olmayan en basit yeterli modeli** bulmaktır.
+
+Challenger seti:
+
+- equal-weight ranks
+- bounded linear factor model
+- ridge / elastic-net
+- monotonic GAM benzeri modeller
+- rank ensemble
+
+Daha karmaşık yöntem ancak walk-forward OOS avantajı kanıtlanırsa ilerler.
+
+Model selection nested walk-forward yapılmalıdır.
+
+---
+
+## 19. Weight politikası
+
+Ağırlıklar elle kutsal sayı değildir.
+
+Ancak özgür optimizasyon da yapılmaz.
+
+Zorunlu korumalar:
+
+- bounded coefficients
+- regularization
+- minimum training window
+- parameter budget
+- correlated-feature penalty
+- sector stability checks
+- coefficient drift monitoring
+
+Per-ratio yüzlerce serbest ağırlık default olarak reddedilir.
+
+---
+
+## 20. Ana hedef fonksiyonu
+
+Primary:
+
+- forward sector/market-adjusted Spearman Rank IC
+
+Secondary:
+
+- ICIR
+- positive IC month ratio
+- top-minus-bottom spread
+- monotonic decile return profile
+- top-decile excess return
+- turnover
+- transaction-cost net return
+- drawdown
+- breadth
+- sector/regime stability
+
+Hiçbir tek metrik tek başına production geçiş kararı veremez.
+
+---
+
+## 21. Portfolio policy ayrı sistemdir
+
+Alpha model "hangi hisse daha güçlü?" sorusunu cevaplar.
+
+Portfolio policy:
+
+- kaç hisse
+- threshold
+- sector cap
+- liquidity floor
+- confidence gate
+- risk cap
 - rebalance frequency
 - holding period
+- transaction cost
 
-Bunların hiçbiri score modelinin içine gizlenmez.
+sorularını ayrı çözer.
+
+Top-10, >0.60 veya başka eski kurallar otomatik devralınmaz.
 
 ---
 
-## 15. Eski Total Rasyo ile ilişki
+## 22. Legacy kod politikası
 
-Eski üretim matematiği silinmeden önce **Legacy** olarak dondurulur.
-
-Yeni sistem paralel çalışır:
+Yeni uygulama ayrı namespace ile başlayacaktır:
 
 ```
-legacy_score
-tr2_raw_alpha
-tr2_total_0_100
-tr2_confidence
-tr2_risk
+src/tr2/
+research/tr2/
+tests/tr2/
+config/tr2/
 ```
 
-Aynı tarih/evren üzerinde karşılaştırma yapılır.
+Legacy kod yeni motor tarafından import edilmez.
 
-Yeni sistem yalnız kabul kriterlerini geçtiğinde varsayılan hale gelir.
+Bir legacy parça kullanılacaksa:
 
----
+1. audit edilir,
+2. davranışı testle tanımlanır,
+3. yeni TR2 sözleşmesine port edilir,
+4. kaynak/provenance notu eklenir.
 
-## 16. Yasaklar
-
-Aşağıdakiler Total Rasyo 2.0'da yasaktır:
-
-- Puanları güzel göstermek için skor inflasyonu.
-- Eksik veriye sessiz 0.5 / 0 / ortalama doldurma.
-- Historical timestamp bilinmeyen forecast'i geçmişe sızdırma.
-- Aynı ekonomik sinyali farklı isimlerle iki kere ağırlıklandırma.
-- Pro+ hazır skorunu sorgusuz Total'e ekleme.
-- In-sample sonucu production başarı kanıtı sayma.
-- Birkaç aylık backtest sonucuna göre sabit ağırlık seçme.
-- Sadece CAGR'a bakıp benchmark ve risk ölçülerini yok sayma.
-- Current-period veriyle historical model selection yapma.
-- Mevcut güçlü fail-closed veri semantiğini bozma.
+Port edilmeyen legacy kod production TR2'nin parçası değildir.
 
 ---
 
-## 17. Başarı tanımı
+## 23. Kabul / silme politikası
 
-Total Rasyo 2.0 başarılı sayılmak için yalnız "100'e çıkan hisse var" şartını değil, aşağıdakileri karşılamalı:
+Eski dosya veya modül sırf çalışıyor diye korunmaz.
 
-1. 0–100 skala tam ve yorumlanabilir kullanılmalı.
-2. PIT backtest temiz olmalı.
-3. Quality/Value gibi baseline pozitif sinyaller korunmalı veya iyileştirilmeli.
-4. Yeni faktörler incremental out-of-sample bilgi getirmeli.
-5. Score sıralaması, evrene karşı ileri getirilerde istikrarlı ayrım yaratmalı.
-6. Portfolio policy, işlem maliyeti sonrası benchmarka karşı değerlendirilmelidir.
-7. Confidence gerçekten düşük-güvenli gözlemleri ayırabilmeli.
-8. Risk ayrı raporlanmalı.
-9. Pro+ veri katkısı ablation ile kanıtlanmalı.
-10. Her değişiklik yaşayan roadmap'te işlenmeli.
+Silme adayları:
+
+- ekonomik anlamı zayıf formüller
+- redundantly aynı sinyal
+- arbitrary thresholds
+- score-inflation transforms
+- confidence-alpha karışımı
+- risk-alpha karışımı
+- leakage riski
+- vendor field tahmini
+- backward-looking olup forward bilgi taşımayan feature
+- kısa backtestte tesadüfen iyi görünen kural
+
+Repository history zaten eski kodu korur; production ağacında gereksiz legacy taşımak zorunlu değildir.
 
 ---
 
-## 18. Yönetim kuralı
+## 24. Başarı tanımı
 
-Uygulama planının tek otoritesi repository root'taki `ROADMAP.md` dosyasıdır.
+Total Rasyo 2.0 ancak şu durumda başarılıdır:
 
-Her geliştirme işleminde:
+```
+PIT clean
++ reproducible
++ forward IC positive and stable
++ incremental Pro+ contribution demonstrated
++ monotonic ranking
++ transaction-cost aware
++ sector/regime robustness
++ interpretable provenance
+```
 
-1. Önce güncel HEAD alınır.
-2. Yapılacak iş roadmap'teki bir Work Item'a bağlanır.
-3. Kod/veri/test değişikliği yapılır.
-4. Kanıt/test sonucu kaydedilir.
-5. **Aynı iş içinde ROADMAP.md güncellenir.**
-6. İş `DONE` olmadan "tamamlandı" denmez.
-7. Yeni bulgu planı değiştiriyorsa eski karar silinmez; değişikliğin nedeni changelog'a eklenir.
+0–100 görsel olarak güzel dağılıyor fakat forward ayrım üretmiyorsa sistem başarısızdır.
 
+---
+
+## 25. Yönetim
+
+Tek yaşayan uygulama planı:
+
+`ROADMAP.md`
+
+Her işte roadmap güncellenir.
+
+Eski varsayım geri gelirse açık kanıtla yeniden kabul edilmek zorundadır.
