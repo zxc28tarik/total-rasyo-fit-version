@@ -9,7 +9,7 @@ bağımsız ağırlıklandırma.
 
 ```bash
 pip install pytest
-pytest -q          # 39 passed
+pytest -q          # 63 passed
 ```
 
 ## Neden ayrı bir motor
@@ -122,8 +122,10 @@ src/ratio_engine/spec.py      şema yükleyici + fail-closed doğrulayıcı
 src/ratio_engine/calc.py      formül → beş sonuçtan biri
 src/ratio_engine/scoring.py   aile normalizasyonlu kesitsel skorlama
 src/ratio_engine/evaluator.py güvenli formül değerlendirici (vendor'lanmış)
+src/ratio_engine/trend.py     8 çeyrek üzerinden (seviye, eğim, istikrar)
+src/ratio_engine/liquidity.py 60 günlük ortalama TL işlem hacmi
 sql/043_ratio_set_v2.sql      PostgreSQL şeması (2 tablo, 15 CHECK, 2 trigger)
-tests/                        39 test
+tests/                        63 test
 ```
 
 `evaluator.py`, Total Rasyo projesinin `src/analytics/ratios_calc.py`
@@ -154,7 +156,7 @@ Kapsam eşiğinin altında skor `None` döner ve durum `YETERSIZ_KAPSAM` olur �
 ## Doğrulama durumu
 
 ```
-39 test                          passed
+63 test                          passed
 Mutasyon testi                   5/5 yakalandı
 Üçüncü parti bağımlılık          yok
 PostgreSQL migration             canlı veritabanında HENÜZ KOŞULMADI

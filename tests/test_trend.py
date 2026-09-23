@@ -134,3 +134,13 @@ def test_unknown_ratio_is_missing():
     t = compute_trend(rising_roe_outcomes(), "NO_SUCH_RATIO", date(2025, 12, 31))
     assert t.status == "MISSING"
     assert t.quarters_used == 0
+
+
+def test_public_surface_exports_the_new_primitives():
+    import ratio_engine
+
+    assert ratio_engine.compute_trend is not None
+    assert ratio_engine.TrendTriple is not None
+    assert ratio_engine.adv_try is not None
+    assert "compute_trend" in ratio_engine.__all__
+    assert "adv_try" in ratio_engine.__all__
