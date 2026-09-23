@@ -8,8 +8,10 @@ against a set the validator would have rejected.
 from __future__ import annotations
 
 import json
+from datetime import date, timedelta
 from pathlib import Path
 
+from ratio_engine.calc import RatioOutcome
 from ratio_engine.spec import load_ratio_set
 
 
@@ -70,3 +72,27 @@ def simple_ratio(family: str, groups: list[str], field: str = "a", **extra) -> d
     }
     spec.update(extra)
     return spec
+
+
+def _quarter_end_from_index(q_index: int) -> date:
+    year, quarter = divmod(q_index, 4)
+    month = quarter * 3 + 3
+    if month == 12:
+        return date(year, 12, 31)
+    return date(year, month + 1, 1) - timedelta(days=1)
+
+
+def rising_roe_outcomes(ticker="AAA", n=8, start=0.10, step=0.01):
+    """n quarters of ROE rising by `step` each quarter, ending 2025-12-31."""
+    end_index = 2025 * 4 + 3
+    return [
+        RatioOutcome(
+            ticker=ticker,
+            period_end=_quarter_end_from_index(end_index - (n - 1 - i)),
+            version_tag="ORIGINAL",
+            ratio_name="ROE",
+            value=start + i * step,
+            status="OK",
+        )
+        for i in range(n)
+    ]

@@ -79,3 +79,58 @@ def test_noisy_series_has_larger_spread_than_clean_one():
 def test_residual_spread_is_never_negative():
     points = [(0, -5.0), (1, 3.0), (2, -2.0)]
     assert _residual_mad(points, slope=0.0) >= 0.0
+
+
+from datetime import date
+
+from ratio_engine.calc import RatioOutcome
+from ratio_engine.trend import compute_trend
+from tests._fixtures import rising_roe_outcomes
+
+
+def test_rising_series_yields_positive_slope_and_latest_level():
+    t = compute_trend(rising_roe_outcomes(), "ROE", date(2025, 12, 31))
+    assert t.status == "OK"
+    assert t.quarters_used == 8
+    assert t.slope == pytest.approx(0.01)
+    assert t.level == pytest.approx(0.17)
+    assert t.stability == pytest.approx(0.0)
+
+
+def test_too_few_quarters_is_missing_not_zero():
+    t = compute_trend(rising_roe_outcomes(n=5), "ROE", date(2025, 12, 31))
+    assert t.status == "MISSING"
+    assert t.slope is None
+    assert t.quarters_used == 5
+
+
+def test_non_ok_quarters_do_not_count_toward_the_minimum():
+    outcomes = rising_roe_outcomes()
+    # Blank three quarters out as BEST: they carry no number, so they are not
+    # observations (K21), leaving five - one short of the minimum.
+    blanked = [
+        RatioOutcome(ticker=o.ticker, period_end=o.period_end,
+                     version_tag=o.version_tag, ratio_name=o.ratio_name,
+                     value=None, status="BEST")
+        for o in outcomes[:3]
+    ]
+    t = compute_trend(blanked + outcomes[3:], "ROE", date(2025, 12, 31))
+    assert t.status == "MISSING"
+    assert t.quarters_used == 5
+
+
+def test_quarters_outside_the_window_are_ignored():
+    t = compute_trend(rising_roe_outcomes(n=12), "ROE", date(2025, 12, 31))
+    assert t.quarters_used == 8
+
+
+def test_a_window_without_the_end_quarter_has_no_level():
+    outcomes = rising_roe_outcomes(n=9)[:-1]
+    t = compute_trend(outcomes, "ROE", date(2025, 12, 31))
+    assert t.status == "MISSING"
+
+
+def test_unknown_ratio_is_missing():
+    t = compute_trend(rising_roe_outcomes(), "NO_SUCH_RATIO", date(2025, 12, 31))
+    assert t.status == "MISSING"
+    assert t.quarters_used == 0

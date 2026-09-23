@@ -13,9 +13,13 @@ means ``MISSING``, never a silent 0.0.
 """
 
 from dataclasses import dataclass
-from typing import Sequence
+from datetime import date
+from typing import Iterable, Sequence, TYPE_CHECKING
 
-from ratio_engine.evaluator import _is_finite
+from ratio_engine.evaluator import _is_finite, _quarter_end
+
+if TYPE_CHECKING:
+    from ratio_engine.calc import RatioOutcome
 
 STATUS_OK = "OK"
 STATUS_MISSING = "MISSING"
@@ -96,3 +100,56 @@ def _residual_mad(points: Sequence[tuple[int, float]], slope: float) -> float:
     residuals = [p[1] - (slope * p[0] + intercept) for p in points]
     centre = _median(residuals)
     return _median([abs(r - centre) for r in residuals])
+
+
+def _quarter_index(value: date) -> int:
+    anchor = _quarter_end(value)
+    return anchor.year * 4 + ((anchor.month - 1) // 3)
+
+
+def compute_trend(
+    outcomes: Iterable["RatioOutcome"],
+    ratio_name: str,
+    period_end: date,
+    *,
+    window: int = DEFAULT_WINDOW,
+    min_quarters: int = DEFAULT_MIN_QUARTERS,
+) -> TrendTriple:
+    """Derive (level, slope, stability) for one ratio of one ticker.
+
+    ``level`` is the value at ``period_end`` itself, not the window mean: the
+    triple says "where it is, where it is heading, how steadily", and the
+    first of those is a point reading.
+    """
+    end_index = _quarter_index(period_end)
+    first_index = end_index - (window - 1)
+
+    points: list[tuple[int, float]] = []
+    for o in outcomes:
+        if o.ratio_name != ratio_name or o.status != STATUS_OK:
+            continue
+        if not _is_finite(o.value):
+            continue
+        idx = _quarter_index(o.period_end)
+        if first_index <= idx <= end_index:
+            points.append((idx, float(o.value)))
+
+    points.sort()
+    used = len(points)
+
+    if used < min_quarters:
+        return TrendTriple(ratio_name, None, None, None, STATUS_MISSING, used)
+
+    level = next((v for idx, v in reversed(points) if idx == end_index), None)
+    if level is None:
+        return TrendTriple(ratio_name, None, None, None, STATUS_MISSING, used)
+
+    slope = _ols_slope(points)
+    if slope is None:
+        return TrendTriple(ratio_name, None, None, None, STATUS_MISSING, used)
+
+    stability = _residual_mad(points, slope)
+    if not _is_finite(stability):
+        return TrendTriple(ratio_name, None, None, None, STATUS_MISSING, used)
+
+    return TrendTriple(ratio_name, level, slope, stability, STATUS_OK, used)
