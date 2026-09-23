@@ -1,420 +1,420 @@
-# TOTAL RASYO FIT — YAŞAYAN ROADMAP
+# TOTAL RASYO FIT — GREENFIELD YAŞAYAN ROADMAP
 
-**Tek plan otoritesi:** Bu dosya.  
+**Tek plan otoritesi:** Bu dosya  
 **Son güncelleme:** 2026-09-23  
-**Plan başlangıç HEAD:** `4fb840e635d193419c8028e85ae7b10c133684c8`  
-**Mimari:** [docs/TOTAL_RASYO_2_0_MIMARI.md](docs/TOTAL_RASYO_2_0_MIMARI.md)
+**Aktif mimari:** [docs/TOTAL_RASYO_2_0_MIMARI.md](docs/TOTAL_RASYO_2_0_MIMARI.md)  
+**Greenfield reset commit:** `52040f42ca0cf2a146a105ddcdd4905ccf53901f`
 
 ---
 
-## Durum kodları
+## Zorunlu çalışma kuralı
 
-- `DONE` — Kod/veri/doküman + doğrulama kanıtı tamam.
-- `IN_PROGRESS` — Aktif olarak çalışılıyor.
-- `READY` — Ön koşulları tamam, başlanabilir.
-- `BLOCKED` — Dış veri/karar/altyapı bekliyor.
-- `PLANNED` — Planlandı, öncelik sırası gelmedi.
-- `REJECTED` — Denendi veya incelendi, gerekçeyle reddedildi.
-- `LEGACY` — Karşılaştırma için korunuyor, yeni mimarinin otoritesi değil.
+Bu repository'de hiçbir eski matematik, oran, eşik, ağırlık veya modül otomatik olarak doğru kabul edilmez.
 
----
+Her iş şu sırayla yürür:
 
-# ZORUNLU ÇALIŞMA KURALI
+1. Güncel remote HEAD doğrulanır.
+2. İlgili `TR2-XXX` işi `IN_PROGRESS` yapılır.
+3. Gerekli legacy kod yalnız inceleme/kanıt amacıyla okunur.
+4. Yeni çözüm sıfırdan `src/tr2`, `research/tr2`, `tests/tr2`, `config/tr2` altında geliştirilir.
+5. Eğer eski bir parça taşınacaksa KEEP/PORT/REWRITE/DELETE kararı ve gerekçesi kaydedilir.
+6. Test, backtest veya veri receipt'i üretilir.
+7. Bu roadmap aynı çalışma paketinde güncellenir.
+8. Kanıt yoksa iş `DONE` yapılamaz.
+9. Kullanıcıya "tamamlandı" denmeden önce GitHub'daki durum `DONE` olmalıdır.
 
-Bu projede **her gerçek iş GitHub'da bu planı güncellemek zorundadır.**
+Durumlar:
 
-Her iş için sıra:
-
-1. Güncel remote `main` / aktif çalışma dalı ve HEAD doğrulanır.
-2. İş bu dosyadaki bir `TR2-XXX` maddesine bağlanır.
-3. Gerekirse madde `IN_PROGRESS` yapılır.
-4. Kod/veri/test/doküman değişikliği uygulanır.
-5. Test / veri receipt / araştırma sonucu kaydedilir.
-6. **Aynı çalışma paketinde bu roadmap tekrar güncellenir.**
-7. Kanıt yoksa madde `DONE` yapılamaz.
-8. Yeni bulgu planı değiştirirse eski yön sessizce silinmez; aşağıdaki changelog'a neden yazılır.
-9. Kullanıcıya "yapıldı" denmeden önce GitHub'daki durum bu dosyada `DONE` olmalıdır.
-
-Bu kural, insan veya AI fark etmeksizin projede çalışan herkes için geçerlidir.
+- `DONE`
+- `IN_PROGRESS`
+- `READY`
+- `BLOCKED`
+- `PLANNED`
+- `REJECTED`
 
 ---
 
-# ÜST SEVİYE DURUM
+# Ana fazlar
 
-| ID | Faz | Durum | Amaç |
+| ID | Faz | Durum | Çıktı |
 |---|---|---|---|
-| TR2-000 | Baseline ve mevcut motor | DONE | Sağlam v2 rasyo motorunu ve araştırma baseline'ını sabitle |
-| TR2-010 | Total Rasyo 2.0 mimari kararı | DONE | Yeni skor matematiği + Pro+ rolünü tanımla |
-| TR2-020 | Pro+ veri sözleşmesi | READY | Gerçek export'u tanı, immutable raw ingest tasarla |
-| TR2-030 | Kanonik feature registry | PLANNED | 1.200+ alanı kontrollü aday havuzuna çevir |
-| TR2-040 | PIT / provenance katmanı | PLANNED | Gelecek bilgi sızıntısını engelle |
-| TR2-050 | Quality 2.0 | PLANNED | Seviye kalitesini bağımsız faktör yap |
-| TR2-060 | Fundamental Trend | PLANNED | İyileşme/kötüleşmeyi quality'den ayır |
-| TR2-070 | Valuation 2.0 | PLANNED | M2 yerine saf ve çok-kaynaklı değerleme faktörü |
-| TR2-080 | Growth + Expectations | PLANNED | Forward tahmin ve revision faktörlerini ekle |
-| TR2-090 | Momentum / Residual Alpha | PLANNED | Fiyat sinyalini valuation'dan ayır |
-| TR2-100 | Confidence 2.0 | PLANNED | Sinyal gücü ile veri/model güvenini ayır |
-| TR2-110 | Risk 2.0 | PLANNED | Volatilite ve downside riskini alpha'dan ayır |
-| TR2-120 | Feature selection / redundancy | PLANNED | Tekrarlı 1.200+ metriği 15–40 üretim faktörüne indir |
-| TR2-130 | Walk-forward model | PLANNED | Kısıtlı, PIT güvenli faktör ağırlıklarını öğren |
-| TR2-140 | 0–100 kalibrasyon | PLANNED | Raw Alpha → kesitsel Total Rasyo 0–100 |
-| TR2-150 | Selection / portfolio policy | PLANNED | Score'dan ayrı seçim ve portföy kuralları |
-| TR2-160 | OOS kabul testi | PLANNED | IC, spread, benchmark, maliyet, rejim testleri |
-| TR2-170 | Shadow / parallel run | PLANNED | Legacy ile TR2'yi paralel canlı gözlemle |
-| TR2-180 | Production cutover | PLANNED | Yalnız kabul kriterleri geçilirse TR2'yi varsayılan yap |
+| TR2-000 | Greenfield reset | DONE | Eski sistem varsayım olmaktan çıkarıldı |
+| TR2-010 | Legacy forensic audit | READY | KEEP / PORT / REWRITE / DELETE matrisi |
+| TR2-020 | Veri sözleşmesi | READY | KAP + market + Pro+ kanonik veri modeli |
+| TR2-030 | PIT/provenance çekirdeği | PLANNED | leakage-safe feature store |
+| TR2-040 | Feature registry | PLANNED | ekonomik anlamı tanımlı aday feature evreni |
+| TR2-050 | Factor discovery | PLANNED | forward IC taşıyan bağımsız faktör aileleri |
+| TR2-060 | InvestingPro+ feature factory | BLOCKED | ilk gerçek export sonrası |
+| TR2-070 | Alpha model v1 | PLANNED | basit/robust challenger modeller |
+| TR2-080 | Confidence model | PLANNED | alpha'dan ayrı güven skoru |
+| TR2-090 | Risk model | PLANNED | alpha'dan ayrı risk skoru |
+| TR2-100 | 0–100 calibration | PLANNED | raw alpha → Total Rasyo 0–100 |
+| TR2-110 | Nested walk-forward | PLANNED | gerçek OOS model selection |
+| TR2-120 | Portfolio policy | PLANNED | score'dan bağımsız seçim motoru |
+| TR2-130 | Shadow production | PLANNED | legacy vs TR2 paralel canlı kayıt |
+| TR2-140 | Cutover / legacy cleanup | PLANNED | yalnız kanıtlanan yeni sistem üretime |
 
 ---
 
-# TR2-000 — BASELINE VE MEVCUT MOTOR
+# TR2-000 — GREENFIELD RESET
 
 **Durum: DONE**
 
-Korunan temel:
+Karar:
 
-- 67 rasyo.
-- 19 family.
-- 7 pillar.
-- 6 sektör grubu.
-- `OK/MISSING/BEST/WORST/NOT_APPLICABLE`.
-- Fail-closed coverage.
-- Rasyo sayısından bağımsız family/pillar ağırlığı.
-- Sektöre göre `applies_to`.
-- Mutlak good-count yerine weighted good-ratio.
-- Medyan/MAD robust scoring.
-- Quality / Growth / Value ayrımı.
-- Araştırma IC harness.
+- Mevcut 67 ratio seti otomatik korunmayacak.
+- Mevcut family/pillar yapısı otomatik korunmayacak.
+- Mevcut quality/growth/value kompozitleri otomatik korunmayacak.
+- Mevcut IC/backtest sonuçları tasarım gerçeği değil, yalnız **baseline evidence**.
+- Mevcut kod production TR2 tarafından import edilmeyecek.
+- Yeni motor ayrı namespace'te sıfırdan kurulacak.
+- Legacy parçalar ancak audit sınavını geçerse port edilecek.
 
-2026-09-23 baseline araştırma receipt:
-
-- Value monthly / 6m forward mean IC ≈ +0.136, NW t ≈ +2.03.
-- Quality mean IC ≈ +0.092, NW t ≈ +2.08.
-- Growth mean IC ≈ +0.004, NW t ≈ +0.05.
-- 12 aylık mevcut strateji ≈ +%5.5 net.
-- Aynı evren ≈ +%9.2.
-- Picks hit rate ≈ %48; universe ≈ %48.
-- Top-10 kuralı mevcut kısa örnekte üstünlük göstermedi.
-- Holding-period ve threshold sonuçları kararsız; kısa örnek üzerine production kararı verilmeyecek.
-
-**Kanıt commitleri:** `04d5796`, `52c9855`, `2df34be`, `055420f`, `be62176`.
-
----
-
-# TR2-010 — TOTAL RASYO 2.0 MİMARİ KARARI
-
-**Durum: DONE**
-
-Belge:
+Kanıt:
 
 - `docs/TOTAL_RASYO_2_0_MIMARI.md`
-
-Kabul edilen ana kararlar:
-
-- 0–100 artık teorik maksimum yüzdesi değil, kesitsel yatırım-sinyali rank/kalibrasyonudur.
-- Raw Alpha ayrıca saklanır.
-- Quality, Valuation, Growth, Expectations, Momentum, Fundamental Trend ayrı faktör aileleridir.
-- Confidence alpha'dan ayrıdır.
-- Risk alpha'dan ayrıdır.
-- InvestingPro+ hazır skorları sorgusuz sabit ağırlıkla Total'e eklenmez.
-- Pro+ feature factory + challenger + valuation ensemble + benchmark rolündedir.
-- Weight fitting yalnız faktör/eksen düzeyinde ve walk-forward yapılır.
-- PIT disiplini kırılmaz.
-- Score model ile portfolio policy ayrıdır.
-- Legacy sonuçlar karşılaştırma için korunur.
-
-**Kanıt commit:** `4fb840e`.
+- commit `52040f42`
 
 ---
 
-# TR2-020 — INVESTINGPRO+ VERİ SÖZLEŞMESİ
+# TR2-010 — LEGACY FORENSIC AUDIT
 
 **Durum: READY**
 
-**Yeni gerçek:** Kullanıcının InvestingPro+ üyeliği 2026-09-23 itibarıyla mevcut.
+Bu ilk gerçek teknik iştir.
 
-## TR2-021 — İlk gerçek export envanteri
+Amaç: eski sistemi "korumak" değil, hangi parçaların gerçekten ekonomik ve matematiksel olarak işe yaradığını belirlemek.
+
+## TR2-011 — Oran envanteri
+
+**Durum: READY**
+
+Her legacy ratio için tablo:
+
+```
+ratio_name
+economic_thesis
+formula
+direction
+sector_applicability
+required_fields
+period_semantics
+PIT_safety
+outlier_behavior
+coverage
+redundancy_cluster
+current_forward_IC
+incremental_IC
+decision
+reason
+```
+
+Decision:
+
+- KEEP_AS_IS
+- PORT_WITH_CHANGES
+- REWRITE
+- DELETE
+
+## TR2-012 — Kompozit ve pillar audit
+
+**Durum: PLANNED**
+
+Eski:
+
+- quality
+- growth
+- value
+- pillar weights
+- family normalization
+
+tek tek sınanacak.
+
+Soru:
+
+> Bu toplulaştırma gerçekten forward bilgi artırıyor mu, yoksa yalnız muhasebe sınıflandırması mı?
+
+## TR2-013 — Transform/eşik audit
+
+**Durum: PLANNED**
+
+Tüm:
+
+- hard thresholds
+- anchors
+- sigmoid/logistic
+- winsorization
+- median/MAD transforms
+- coverage gates
+
+tek tek forward test edilecek.
+
+## TR2-014 — Araştırma baseline doğrulaması
+
+**Durum: PLANNED**
+
+Mevcut IC sonuçları yeniden üretilecek:
+
+- aynı evren
+- aynı as-of
+- aynı horizon
+- aynı price source
+- aynı availability assumptions
+
+Amaç önceki sonucu kutsamak değil, reproducibility testidir.
+
+---
+
+# TR2-020 — VERİ SÖZLEŞMESİ
+
+**Durum: READY**
+
+Yeni model önce veri sözleşmesini kuracak.
+
+Canonical observation:
+
+```
+entity_id
+feature_id
+value
+unit
+currency
+period_start
+period_end
+published_at
+available_at
+snapshot_at
+source
+source_record_id
+revision_state
+quality_flag
+parser_version
+```
+
+Kaynak sınıfları:
+
+- KAP reported
+- market
+- InvestingPro+ export
+- derived
+- consensus/estimate
+- manual audited input
+
+---
+
+# TR2-021 — İlk InvestingPro+ gerçek export
 
 **Durum: BLOCKED**
 
-Gereken:
+Gerekli:
 
-- InvestingPro+ üzerinden BIST için gerçek bir CSV/XLSX export örneği.
-- Mümkünse mümkün olan en geniş kolon seti.
-- Export zamanı.
-- Kullanılan screener / ülke / evren filtresi.
+- BIST evreninden gerçek CSV/XLSX export
+- export zamanı
+- seçili kolonlar
+- screener filtreleri
+- mümkün olan en geniş alan seti
 
-**Kural:** Gerçek dosya görülmeden kolon adı veya mapping uydurulmayacak.
+**Gerçek dosya gelmeden kolon mapping yazılmayacak.**
 
-## TR2-022 — Raw immutable snapshot formatı
+---
+
+# TR2-022 — Immutable raw ingest
 
 **Durum: READY**
 
-Tasarlanacak:
+Her source snapshot:
 
-- source
-- export_at
-- ingest_at
-- SHA256
-- original filename
-- row count
-- column count
-- schema fingerprint
-- universe/filter metadata
-- raw file path
-- parser version
+```
+sha256
+source
+snapshot_at
+filename
+schema_fingerprint
+row_count
+column_count
+universe_definition
+parser_version
+```
 
-Acceptance:
+saklamalı.
 
-- aynı raw dosya değişmeden tekrar doğrulanabilmeli;
-- transformed fact'ten raw kaynağa geri gidilebilmeli.
+Raw dosya overwrite edilmez.
 
-## TR2-023 — Canonical field mapper
+---
+
+# TR2-030 — PIT / PROVENANCE ÇEKİRDEĞİ
+
+**Durum: PLANNED**
+
+Ana invariant:
+
+```
+feature.available_at <= model_as_of
+```
+
+Test zorunlulukları:
+
+- future filing blocked
+- later restatement blocked unless explicitly requested
+- current Pro+ historical view cannot leak backward
+- estimate revision requires two real historical snapshots
+- price window cannot include bars after as-of
+
+---
+
+# TR2-040 — FEATURE REGISTRY
+
+**Durum: PLANNED**
+
+Eski ve yeni bütün feature adayları aynı registry'ye girecek.
+
+Her feature:
+
+```
+feature_id
+economic_thesis
+source
+formula
+direction
+sector_scope
+normalization_candidates
+missing_semantics
+PIT_grade
+coverage
+redundancy_cluster
+status
+```
+
+Hiçbir feature yalnız "yaygın kullanılan rasyo" olduğu için production'a alınmaz.
+
+---
+
+# TR2-050 — FACTOR DISCOVERY
+
+**Durum: PLANNED**
+
+Başlangıç aileleri yalnız hipotezdir:
+
+- Quality
+- Valuation
+- Growth
+- Expectations/Revisions
+- Fundamental Momentum
+- Price Momentum/Residual Alpha
+- Capital Allocation
+- Earnings Quality
+- Liquidity/Microstructure
+
+Her aile için:
+
+1. univariate rank IC
+2. rolling IC
+3. positive-month ratio
+4. sector IC
+5. regime IC
+6. incremental IC
+7. correlation/redundancy
+8. monotonic decile spread
+
+kanıtlanacak.
+
+Forward bilgi taşımayan aile silinir.
+
+---
+
+# TR2-060 — INVESTINGPRO+ FEATURE FACTORY
 
 **Durum: BLOCKED → TR2-021**
 
-İlk gerçek export'tan sonra:
+Gerçek export sonrası:
 
 ```
-vendor_column
-→ canonical_field
-→ semantic_group
-→ unit
-→ period_type
-→ currency
-→ PIT status
-→ transformation
-```
-
-mapping oluşturulacak.
-
-## TR2-024 — Import validation
-
-**Durum: PLANNED**
-
-- duplicate ticker
-- unknown ticker
-- impossible type
-- unit mismatch
-- missing period
-- stale export
-- schema drift
-- vendor field disappearance
-
-fail-closed testleri.
-
----
-
-# TR2-030 — KANONİK FEATURE REGISTRY
-
-**Durum: PLANNED**
-
-Amaç: "1.200+ veri"yi doğrudan modele sokmamak.
-
-Her feature için:
-
-- canonical name
-- source
-- economic family
-- sign/direction
-- point/flow
-- period
-- lag
-- sector applicability
-- coverage
-- PIT confidence
-- missing semantics
-- expected range
-- redundancy cluster
-- production status
-
-Aşamalar:
-
-```
-1200+ raw
-→ semantik audit
-→ usable candidates
-→ coverage screen
-→ redundancy clusters
-→ IC screen
+1200+ vendor fields
+→ semantic mapping
+→ availability audit
+→ PIT classification
+→ coverage filter
+→ redundancy clustering
+→ candidate transforms
+→ univariate IC
 → incremental IC
-→ 15–40 production factors
+→ OOS survival
 ```
 
----
+Özel kullanım:
 
-# TR2-040 — POINT-IN-TIME / PROVENANCE
+- Fair Value = challenger/ensemble input
+- Financial Health = benchmark/challenger
+- Altman/Beneish = candidate features
+- forward estimates = expectations
+- revisions = expectations momentum
+- surprises = earnings-information factor
 
-**Durum: PLANNED**
-
-Ana kurallar:
-
-- KAP publication timestamp historical truth için ana otorite.
-- Pro+ current export geriye dönük "o gün biliniyordu" sayılmaz.
-- Estimate/forecast snapshot tarihi olmadan historical backteste girmez.
-- Revision ancak iki gerçek snapshot mevcutsa hesaplanır.
-- Restatement ile original reported fact ayrılır.
-- Her feature `available_at` taşımalıdır.
-
-Acceptance test:
-
-- Bir as-of tarihi verildiğinde model o tarihten sonra oluşmuş hiçbir field'a erişememeli.
+**Hazır vendor score doğrudan Total Rasyo'ya eklenmez.**
 
 ---
 
-# TR2-050 — QUALITY 2.0
+# TR2-070 — ALPHA MODEL V1
 
 **Durum: PLANNED**
 
-Amaç: "iyi şirket" ile "iyileşen şirket" kavramını ayırmak.
+İlk challenger'lar:
 
-Alt family adayları:
-
-- Profitability
-- Cash Flow Quality
-- Balance Sheet Strength
-- Capital Efficiency
-- Operating Efficiency
-- Earnings Quality
-- Accounting/Distress Quality
-
-Kaynak:
-
-- mevcut 67 rasyo motoru
-- Pro+ ile doğrulanmış ek metrikler
-- Altman/Beneish gibi uygun challenger/feature alanları
-
-Acceptance:
-
-- sekiz dönemdir çok yüksek ve stabil kalite taşıyan şirket yalnız "artık iyileşmiyor" diye cezalandırılamaz.
-- rasyo sayısı pillar ağırlığını değiştiremez.
-
----
-
-# TR2-060 — FUNDAMENTAL TREND
-
-**Durum: PLANNED**
-
-Quality'den bağımsız:
-
-- 1Q delta
-- 4Q delta
-- 8Q robust slope
-- acceleration/deceleration
-- margin trend
-- cash-conversion trend
-- leverage trend
-
-Acceptance:
-
-- seviye ile trend aynı değişkenin içine gömülmeyecek;
-- trend negatif ama seviye çok yüksek ise iki gerçek ayrı ayrı görülebilecek.
-
----
-
-# TR2-070 — VALUATION 2.0
-
-**Durum: PLANNED**
-
-Eski M2/FOLLOW hibrit mantığının yerine:
-
-- relative multiples
-- own valuation model
-- InvestingPro Fair Value
-- mevcutsa consensus/target evidence
-- sector-relative valuation
-- historical-relative valuation
-
-**Yasak:** Fiyat yükseldi diye "ucuzluk" puanını mekanik olarak yok etmek.
-
-Output:
-
-- `valuation_signal`
-- `valuation_confidence`
-- `valuation_disagreement`
-
-Ablation:
-
-- own only
-- Pro+ only
-- ensemble
-- ensemble + disagreement
-
----
-
-# TR2-080 — GROWTH + EXPECTATIONS
-
-**Durum: PLANNED**
-
-Growth:
-
-- revenue
-- EPS
-- EBITDA
-- FCF
-- multi-year CAGR
-
-Expectations / Revisions:
-
-- forward EPS
-- forward revenue
-- forward EBITDA
-- 1m/3m revisions
-- earnings surprise
-- target/consensus revisions (mevcutsa)
-
-Önemli baseline:
-
-- mevcut Growth IC ≈ +0.004; bu nedenle Growth yüksek ağırlığı **kanıtlamak zorunda**.
-
----
-
-# TR2-090 — MOMENTUM / RESIDUAL ALPHA
-
-**Durum: PLANNED**
-
-Adaylar:
-
-- 20d
-- 63d
-- 126d
-- sector-adjusted
-- market-adjusted
-- residual alpha
-- persistence
+```
+A) equal-weight factor ranks
+B) bounded linear model
+C) ridge / elastic-net
+D) rank ensemble
+```
 
 Kural:
 
-- valuation ile momentum birbirini cezalandıran tek bir hibrit skor olmayacak;
-- korelasyonu yüksek momentum varyantları double-count edilmeyecek.
+- en basit model OOS'da yeterliyse karmaşık model reddedilir.
+- tüm model selection training fold içinde yapılır.
+- factor direction training dışında keyfi çevrilmez.
+
+Primary target:
+
+**future sector/market-adjusted return rank**
+
+İlk horizon seti:
+
+- 1M
+- 3M
+- 6M
+- 12M
+
+Horizon sonradan cherry-pick edilmeyecek; hepsi raporlanacak.
 
 ---
 
-# TR2-100 — CONFIDENCE 2.0
+# TR2-080 — CONFIDENCE MODEL
 
 **Durum: PLANNED**
 
-Aday girdiler:
+Alpha'dan bağımsız.
 
-- coverage
+Adaylar:
+
+- source coverage
+- feature coverage
 - freshness
-- source count
-- source agreement
-- peer sample size
-- model dispersion
-- forecast age
-- provenance quality
+- PIT grade
+- peer count
+- valuation dispersion
+- source disagreement
+- estimate age
+- schema stability
 
-Örnek çıktı:
+Confidence score'un görevi:
 
-```
-Total Rasyo: 91
-Confidence:   43
-```
+> alpha'nın doğru olma olasılığını veya veri sağlamlığını açıklamak.
 
-Alpha 91 iken confidence düşük olabilir. Confidence sinyalin anlamını değiştirmez.
+Alpha'yı otomatik 0.5'e çekmek değildir.
 
 ---
 
-# TR2-110 — RISK 2.0
+# TR2-090 — RISK MODEL
 
 **Durum: PLANNED**
 
@@ -424,211 +424,148 @@ Adaylar:
 - downside volatility
 - max drawdown
 - beta
-- liquidity / ADV
-- gap/tail risk
-- leverage/distress overlays
+- liquidity
+- gap risk
+- tail risk
+- balance-sheet distress
 
-Ek9 benzeri düşük-vol mantığı alpha puanının içine gömülmeyecek.
+Risk yüksek diye şirket otomatik "kötü alpha" sayılmaz.
 
 ---
 
-# TR2-120 — FEATURE SELECTION / REDUNDANCY
+# TR2-100 — 0–100 TOTAL RASYO
 
 **Durum: PLANNED**
 
-Her aday feature için:
+Default challenger:
 
-- coverage
-- distribution
-- outlier behavior
-- sector neutrality
-- Spearman IC
-- rolling IC
+```
+TotalRasyo = 100 * cross_sectional_percentile(raw_alpha)
+```
+
+Alternatif:
+
+- empirical CDF calibration
+- sector-neutral percentile then global blend
+
+Seçim yalnız OOS davranış ve yorumlanabilirlikle yapılacak.
+
+---
+
+# TR2-110 — NESTED WALK-FORWARD
+
+**Durum: PLANNED**
+
+Dış fold:
+
+- gerçek OOS test.
+
+İç fold:
+
+- transform seçimi
+- feature selection
+- regularization
+- coefficient fitting
+- threshold selection
+
+Rapor:
+
+- mean IC
 - ICIR
-- positive-month ratio
-- correlation cluster
-- incremental IC
-- regime stability
-
-Hedef:
-
-**15–40 civarı gerçekten farklı üretim faktörü.**
-
-1.200 field kullanmak başarı kriteri değildir.
-
----
-
-# TR2-130 — WALK-FORWARD MODEL
-
-**Durum: PLANNED**
-
-Kavramsal:
-
-```
-RawAlpha =
-    βQ * Quality
-  + βV * Valuation
-  + βG * Growth
-  + βE * Expectations
-  + βM * Momentum
-  + βF * FundamentalTrend
-```
-
-Kurallar:
-
-- expanding/rolling walk-forward
-- future leakage yok
-- bounded weights
-- shrinkage
-- correlated-factor penalty
-- parameter-count discipline
-- sector stability
-- no per-ratio overfitting
-
-Aday yöntemler ancak benchmark sonucu ile seçilecek; karmaşıklık kendisi amaç değildir.
+- NW t
+- positive months
+- decile monotonicity
+- top-bottom spread
+- turnover
+- cost-adjusted return
+- drawdown
+- sector robustness
+- regime robustness
 
 ---
 
-# TR2-140 — TOTAL RASYO 0–100
+# TR2-120 — PORTFOLIO POLICY
 
 **Durum: PLANNED**
 
-Üretilecek:
+Alpha modelden bağımsız test:
 
-- `raw_alpha`
-- `total_rasyo_0_100`
-- `confidence_0_100`
-- `risk_0_100`
-
-İlk tercih:
-
-```
-total_rasyo_0_100 = cross_sectional_percentile(raw_alpha) * 100
-```
-
-Gerekirse tarihsel empirical-CDF kalibrasyonu ayrıca challenger olarak test edilir.
-
-Acceptance:
-
-- tüm ölçek anlamlı kullanılmalı;
-- 50 civarı evren medyanı olmalı;
-- score inflation yapılmamalı;
-- rank IC ham alpha ile doğrulanmalı.
-
----
-
-# TR2-150 — SELECTION / PORTFOLIO POLICY
-
-**Durum: PLANNED**
-
-Score'dan ayrı test edilecek:
-
-- top-N
-- top percentile
-- raw-alpha threshold
+- top N
+- percentile threshold
 - confidence gate
 - risk cap
 - sector cap
 - liquidity floor
-- rebalance interval
+- rebalance schedule
 - holding period
-- transaction costs
+- turnover cap
 
-Bugünkü Top-10 yaklaşımı otomatik olarak korunmayacak.
-
----
-
-# TR2-160 — OUT-OF-SAMPLE KABUL TESTİ
-
-**Durum: PLANNED**
-
-Zorunlu rapor:
-
-- mean rank IC
-- ICIR
-- Newey-West t
-- positive IC months
-- top-minus-bottom
-- top decile excess return
-- benchmark relative return
-- hit rate
-- max drawdown
-- turnover
-- transaction-cost net
-- sector slices
-- bull/bear/sideways slices
-- inflation/regime slices
-- factor ablation
-
-Yeni model yalnız "daha yüksek CAGR" gerekçesiyle kabul edilemez.
+Eski Top-10 / fixed threshold kuralları sıfırdan yarışmaya girer; otomatik korunmaz.
 
 ---
 
-# TR2-170 — SHADOW / PARALLEL RUN
+# TR2-130 — SHADOW PRODUCTION
 
 **Durum: PLANNED**
 
-Aynı gün için:
+Canlı olarak birlikte kayıt:
 
 ```
-legacy_score
+legacy_output
 tr2_raw_alpha
-tr2_total_0_100
+tr2_total_rasyo
 tr2_confidence
 tr2_risk
+model_version
+feature_snapshot_id
 ```
 
-yan yana saklanır.
-
-Amaç:
-
-- canlı drift
-- missing-data behavior
-- Pro+ schema drift
-- factor disagreement
-- confidence calibration
-- gerçek ileri dönem performansı
+Bu fazda TR2 yatırım kararı otoritesi olmaz; gerçek forward outcome biriktirir.
 
 ---
 
-# TR2-180 — PRODUCTION CUTOVER
+# TR2-140 — CUTOVER / LEGACY CLEANUP
 
 **Durum: PLANNED**
 
-Geçiş için:
+Production geçiş şartı:
 
-- OOS kabul kriterleri tamam.
-- PIT audit PASS.
-- Pro+ ingestion fail-closed.
-- Legacy karşılaştırması tamam.
-- Shadow döneminde kritik hata yok.
-- Production run reproducible.
-- Receipt ve model version saklanıyor.
+- nested OOS PASS
+- PIT audit PASS
+- reproducibility PASS
+- data drift monitoring hazır
+- Pro+ contribution ölçülmüş
+- benchmark comparison tamam
+- shadow period kritik hata yok
 
-Geçişten sonra Legacy silinmez; karşılaştırma/audit yolu olarak korunur.
+Sonrasında:
 
----
-
-# ŞİMDİKİ EN KÜÇÜK ENGELSİZ SONRAKİ İŞ
-
-**TR2-022 — Raw immutable snapshot formatını uygulamak.**
-
-Bunun paralelindeki en değerli veri bağımlılığı:
-
-**TR2-021 — Kullanıcının InvestingPro+ hesabından ilk gerçek BIST CSV/XLSX export örneğini elde etmek.**
-
-Gerçek dosya geldiği anda TR2-023 canonical mapping başlayabilir.
+- TR2 production default olur.
+- Kullanılmayan legacy production kodu silinir.
+- Gerekli araştırma kayıtları Git history'de kalır.
 
 ---
 
-# DEĞİŞİKLİK KAYDI
+# ŞİMDİKİ EN KÜÇÜK ENGELSİZ İŞ
 
-## 2026-09-23
+**TR2-011 — Legacy oran envanteri ve KEEP/PORT/REWRITE/DELETE auditi.**
 
-- `DONE` TR2-000: Mevcut v2 ratio engine + güncel IC/backtest araştırmaları baseline olarak kabul edildi.
-- `DONE` TR2-010: Total Rasyo 2.0 matematik ve InvestingPro+ mimarisi kabul edildi.
-- Yeni karar: InvestingPro+ üyeliği artık mevcut; eski "abonelik alınmadı" varsayımı tarihsel kaldı.
-- Yeni karar: Total Rasyo 0–100 raw weighted average değil, doğrulanmış Raw Alpha'nın kesitsel rank/kalibrasyon katmanı olacak.
-- Yeni karar: Confidence ve Risk Total'in içine gömülmeyecek.
-- Yeni karar: Pro+ hazır skorları doğrudan kopyalanmayacak; feature/challenger/ensemble olarak kullanılacak.
-- Yeni kural: Bundan sonraki her iş bu roadmap'i aynı çalışma paketinde güncellemeden `DONE` sayılamaz.
+Bu iş eski sistemi kabul etmek için değil, sıfırdan kuracağımız feature evrenine neyin girmeye değer olduğunu belirlemek içindir.
+
+Paralel dış bağımlılık:
+
+**TR2-021 — İlk gerçek InvestingPro+ BIST export dosyası.**
+
+---
+
+# CHANGELOG
+
+## 2026-09-23 — Greenfield reset
+
+- Önceki "mevcut v2 motorunu koru" varsayımı iptal edildi.
+- Mevcut 67 rasyo, pillar/family ve kompozitlerin tamamı yeniden denetime açıldı.
+- Total Rasyo 2.0 ayrı namespace altında sıfırdan kurulacak.
+- Eski kod yalnız evidence/baseline olarak kullanılacak.
+- Eski parça ancak KEEP/PORT/REWRITE/DELETE auditi sonrası TR2'ye girebilir.
+- InvestingPro+ entegrasyonu yeni sistemin feature discovery katmanına bağlandı.
+- Roadmap'in her işlemde güncellenmesi zorunluluğu korundu.
