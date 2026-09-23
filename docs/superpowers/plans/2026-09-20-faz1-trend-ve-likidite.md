@@ -2,7 +2,7 @@
 
 > **Ajan çalışanlar için:** GEREKLİ ALT SKILL: Bu planı görev görev uygulamak
 > için superpowers:subagent-driven-development (önerilen) veya
-> superpowers:executing-plans kullan. Adımlar takip için checkbox (`- [ ]`)
+> superpowers:executing-plans kullan. Adımlar takip için checkbox (`- [x]`)
 > sözdizimi kullanır.
 
 **Hedef:** `ratio_engine`'e iki saf-stdlib primitif eklemek — 8 çeyrek üzerinden
@@ -115,7 +115,7 @@ doldurmak. Uydurma sayı üretir.
 - Oluştur: `src/ratio_engine/trend.py`
 - Test: `tests/test_trend.py`
 
-- [ ] **Adım 1: Başarısız testi yaz**
+- [x] **Adım 1: Başarısız testi yaz**
 
 `tests/test_trend.py`:
 
@@ -159,13 +159,13 @@ def test_missing_status_with_a_number_is_rejected():
         )
 ```
 
-- [ ] **Adım 2: Testi koş, başarısız olduğunu gör**
+- [x] **Adım 2: Testi koş, başarısız olduğunu gör**
 
 Çalıştır: `python -m pytest tests/test_trend.py -v`
 
 Beklenen: FAIL — `ModuleNotFoundError: No module named 'ratio_engine.trend'`
 
-- [ ] **Adım 3: Asgari uygulamayı yaz**
+- [x] **Adım 3: Asgari uygulamayı yaz**
 
 `src/ratio_engine/trend.py`:
 
@@ -221,13 +221,13 @@ class TrendTriple:
             )
 ```
 
-- [ ] **Adım 4: Testi koş, geçtiğini gör**
+- [x] **Adım 4: Testi koş, geçtiğini gör**
 
 Çalıştır: `python -m pytest tests/test_trend.py -v`
 
 Beklenen: 4 passed
 
-- [ ] **Adım 5: Commit**
+- [x] **Adım 5: Commit**
 
 ```bash
 git add src/ratio_engine/trend.py tests/test_trend.py
@@ -242,7 +242,7 @@ git commit -m "feat(trend): add TrendTriple with fail-closed status contract"
 - Değiştir: `src/ratio_engine/trend.py`
 - Test: `tests/test_trend.py`
 
-- [ ] **Adım 1: Başarısız testi yaz**
+- [x] **Adım 1: Başarısız testi yaz**
 
 `tests/test_trend.py` sonuna ekle:
 
@@ -272,13 +272,13 @@ def test_slope_needs_two_distinct_x_values():
     assert _ols_slope([(2, 1.0), (2, 3.0)]) is None
 ```
 
-- [ ] **Adım 2: Testi koş, başarısız olduğunu gör**
+- [x] **Adım 2: Testi koş, başarısız olduğunu gör**
 
 Çalıştır: `python -m pytest tests/test_trend.py -v -k slope`
 
 Beklenen: FAIL — `ImportError: cannot import name '_ols_slope'`
 
-- [ ] **Adım 3: Asgari uygulamayı yaz**
+- [x] **Adım 3: Asgari uygulamayı yaz**
 
 Dosya başındaki importa ekle: `from typing import Sequence`
 
@@ -302,13 +302,13 @@ def _ols_slope(points: Sequence[tuple[int, float]]) -> float | None:
     return slope if _is_finite(slope) else None
 ```
 
-- [ ] **Adım 4: Testi koş, geçtiğini gör**
+- [x] **Adım 4: Testi koş, geçtiğini gör**
 
 Çalıştır: `python -m pytest tests/test_trend.py -v`
 
 Beklenen: 8 passed
 
-- [ ] **Adım 5: Commit**
+- [x] **Adım 5: Commit**
 
 ```bash
 git add src/ratio_engine/trend.py tests/test_trend.py
@@ -323,7 +323,7 @@ git commit -m "feat(trend): fit slope on absolute quarter index"
 - Değiştir: `src/ratio_engine/trend.py`
 - Test: `tests/test_trend.py`
 
-- [ ] **Adım 1: Başarısız testi yaz**
+- [x] **Adım 1: Başarısız testi yaz**
 
 ```python
 from ratio_engine.trend import _residual_mad
@@ -345,13 +345,13 @@ def test_residual_spread_is_never_negative():
     assert _residual_mad(points, slope=0.0) >= 0.0
 ```
 
-- [ ] **Adım 2: Testi koş, başarısız olduğunu gör**
+- [x] **Adım 2: Testi koş, başarısız olduğunu gör**
 
 Çalıştır: `python -m pytest tests/test_trend.py -v -k residual`
 
 Beklenen: FAIL — `ImportError: cannot import name '_residual_mad'`
 
-- [ ] **Adım 3: Asgari uygulamayı yaz**
+- [x] **Adım 3: Asgari uygulamayı yaz**
 
 ```python
 def _median(values: Sequence[float]) -> float:
@@ -384,13 +384,13 @@ def _residual_mad(points: Sequence[tuple[int, float]], slope: float) -> float:
 (`scoring` zaten `spec`'e bakıyor, `trend` ondan bağımsız kalmalı). Ortak bir
 `_stats.py`'ye taşıma ayrı bir iş; bu plan onu kapsam dışı bırakıyor.
 
-- [ ] **Adım 4: Testi koş, geçtiğini gör**
+- [x] **Adım 4: Testi koş, geçtiğini gör**
 
 Çalıştır: `python -m pytest tests/test_trend.py -v`
 
 Beklenen: 11 passed
 
-- [ ] **Adım 5: Commit**
+- [x] **Adım 5: Commit**
 
 ```bash
 git add src/ratio_engine/trend.py tests/test_trend.py
@@ -406,7 +406,7 @@ git commit -m "feat(trend): measure stability as residual MAD"
 - Değiştir: `tests/_fixtures.py`
 - Test: `tests/test_trend.py`
 
-- [ ] **Adım 1: Fikstürü yaz**
+- [x] **Adım 1: Fikstürü yaz**
 
 `tests/_fixtures.py` sonuna ekle (gerekli importları dosya başına al:
 `from datetime import date, timedelta` ve
@@ -437,7 +437,7 @@ def rising_roe_outcomes(ticker="AAA", n=8, start=0.10, step=0.01):
     return outcomes
 ```
 
-- [ ] **Adım 2: Başarısız testi yaz**
+- [x] **Adım 2: Başarısız testi yaz**
 
 ```python
 from datetime import date
@@ -495,13 +495,13 @@ def test_unknown_ratio_is_missing():
     assert t.quarters_used == 0
 ```
 
-- [ ] **Adım 3: Testi koş, başarısız olduğunu gör**
+- [x] **Adım 3: Testi koş, başarısız olduğunu gör**
 
 Çalıştır: `python -m pytest tests/test_trend.py -v -k "compute or window or quarter"`
 
 Beklenen: FAIL — `ImportError: cannot import name 'compute_trend'`
 
-- [ ] **Adım 4: Asgari uygulamayı yaz**
+- [x] **Adım 4: Asgari uygulamayı yaz**
 
 Importları tamamla:
 
@@ -569,13 +569,13 @@ def compute_trend(
     return TrendTriple(ratio_name, level, slope, stability, STATUS_OK, used)
 ```
 
-- [ ] **Adım 5: Tüm testleri koş**
+- [x] **Adım 5: Tüm testleri koş**
 
 Çalıştır: `python -m pytest -q`
 
 Beklenen: 56 passed (39 mevcut + 17 yeni)
 
-- [ ] **Adım 6: Commit**
+- [x] **Adım 6: Commit**
 
 ```bash
 git add src/ratio_engine/trend.py tests/test_trend.py tests/_fixtures.py
@@ -594,7 +594,7 @@ K13 uyarısı planın içine yazılıyor: bu **işlem** likiditesidir, bilanço
 likiditesi değil. LIQ pillar'ındaki cari oran/asit-test bundan ayrıdır ve ikisi
 birbirinin yerine kullanılmaz.
 
-- [ ] **Adım 1: Başarısız testi yaz**
+- [x] **Adım 1: Başarısız testi yaz**
 
 `tests/test_liquidity.py`:
 
@@ -659,13 +659,13 @@ def test_window_keeps_the_most_recent_bars():
     assert r.value == pytest.approx(10_000.0)
 ```
 
-- [ ] **Adım 2: Testi koş, başarısız olduğunu gör**
+- [x] **Adım 2: Testi koş, başarısız olduğunu gör**
 
 Çalıştır: `python -m pytest tests/test_liquidity.py -v`
 
 Beklenen: FAIL — `ModuleNotFoundError: No module named 'ratio_engine.liquidity'`
 
-- [ ] **Adım 3: Asgari uygulamayı yaz**
+- [x] **Adım 3: Asgari uygulamayı yaz**
 
 `src/ratio_engine/liquidity.py`:
 
@@ -740,7 +740,7 @@ def adv_try(
     return LiquidityResult(value, STATUS_OK, days_used)
 ```
 
-- [ ] **Adım 4: Testi koş, geçtiğini gör**
+- [x] **Adım 4: Testi koş, geçtiğini gör**
 
 Çalıştır: `python -m pytest tests/test_liquidity.py -v`
 
@@ -749,7 +749,7 @@ Beklenen: 6 passed
 `days_used` eksik durumda da raporlanır: "neden eksik" sorusu kapsam raporu
 için gerekli, `MISSING` tek başına onu söylemiyor.
 
-- [ ] **Adım 5: Commit**
+- [x] **Adım 5: Commit**
 
 ```bash
 git add src/ratio_engine/liquidity.py tests/test_liquidity.py
@@ -765,7 +765,7 @@ git commit -m "feat(liquidity): compute adv_try over trailing trading bars"
 - Değiştir: `README.md`
 - Test: `tests/test_trend.py`
 
-- [ ] **Adım 1: Başarısız testi yaz**
+- [x] **Adım 1: Başarısız testi yaz**
 
 ```python
 def test_public_surface_exports_the_new_primitives():
@@ -778,13 +778,13 @@ def test_public_surface_exports_the_new_primitives():
     assert "adv_try" in ratio_engine.__all__
 ```
 
-- [ ] **Adım 2: Testi koş, başarısız olduğunu gör**
+- [x] **Adım 2: Testi koş, başarısız olduğunu gör**
 
 Çalıştır: `python -m pytest tests/test_trend.py -v -k public_surface`
 
 Beklenen: FAIL — `AttributeError: module 'ratio_engine' has no attribute 'compute_trend'`
 
-- [ ] **Adım 3: `__init__.py`'yi güncelle**
+- [x] **Adım 3: `__init__.py`'yi güncelle**
 
 Docstring'deki modül listesine iki satır ekle:
 
@@ -803,17 +803,17 @@ from ratio_engine.liquidity import LiquidityResult, adv_try
 `__all__`'a ekle: `"TrendTriple"`, `"TrendError"`, `"compute_trend"`,
 `"LiquidityResult"`, `"adv_try"`.
 
-- [ ] **Adım 4: README'yi güncelle**
+- [x] **Adım 4: README'yi güncelle**
 
 Modül tablosuna iki satır; K18–K21'e referans ver.
 
-- [ ] **Adım 5: Tüm testleri koş**
+- [x] **Adım 5: Tüm testleri koş**
 
 Çalıştır: `python -m pytest -q`
 
 Beklenen: 63 passed
 
-- [ ] **Adım 6: Commit**
+- [x] **Adım 6: Commit**
 
 ```bash
 git add src/ratio_engine/__init__.py README.md tests/test_trend.py
@@ -828,7 +828,7 @@ DEVIR.md'nin "EK — DOĞRULAMA DURUMU" bölümünde beş mutasyonun beşinin de
 yakalandığı raporlanmış. Yeni kod aynı çıtayı karşılamalı: test yoksa davranış
 yoktur.
 
-- [ ] **Adım 1: Dört mutasyonu elle uygula, her birinin en az bir testi kırdığını doğrula**
+- [x] **Adım 1: Dört mutasyonu elle uygula, her birinin en az bir testi kırdığını doğrula**
 
 | # | Mutasyon | Dosya | Kırmalı |
 |---|---|---|---|
@@ -840,13 +840,13 @@ yoktur.
 Her mutasyon için: değişikliği yap → `python -m pytest -q` → **FAIL** gördüğünü
 doğrula → `git checkout -- <dosya>` ile geri al.
 
-- [ ] **Adım 2: Son tam koşu**
+- [x] **Adım 2: Son tam koşu**
 
 Çalıştır: `python -m pytest -q`
 
 Beklenen: 63 passed
 
-- [ ] **Adım 3: Faz sonu commit**
+- [x] **Adım 3: Faz sonu commit**
 
 ```bash
 git add -A
@@ -877,3 +877,36 @@ Bunlar eksiklik değil, kapsam dışıdır:
   kopya bırakıldı; ortak `_stats.py` ayrı bir iş.
 - **TMS 29 / enflasyon düzeltmesi.** DEVIR.md'de açık yapısal sorun; eğimin
   nominal TL'de olması bu fazda bilinçli kabul.
+
+
+---
+
+## Uygulama Notu (2026-09-23, tamamlandı)
+
+Faz 1 koşuldu. Bitiş ölçütünün üçü de sağlandı: **64 passed**, dört mutasyonun
+dördü yakalandı, `import ratio_engine` üçüncü parti hiçbir modül çekmiyor.
+
+Plandan üç sapma:
+
+1. **Test sayısı 63 değil 64.** Mutasyon kontrolü bir eksik test ortaya
+   çıkardı (aşağıda), o da eklendi.
+2. **M3 ilk koşuda kaçtı.** `compute_trend`'deki `status != STATUS_OK` kapısı
+   kaldırıldığında hiçbir test kırılmadı: `RatioOutcome.__post_init__` zaten
+   "OK değilse value None" garantisi verdiği için bir alt satırdaki
+   `_is_finite(o.value)` kontrolü `BEST` satırlarını kendiliğinden eliyordu.
+   Kapı K21'in anlamını taşıdığı için **korundu**; eksik olan testti.
+   `test_a_non_ok_status_is_skipped_even_when_it_carries_a_value` yazıldı —
+   `RatioOutcome`'ın değişmezi valued-BEST kurmayı yasakladığı için test
+   duck-typed bir vekil nesne kullanıyor.
+3. **M1'in kırdığı test plandakinden farklı.** Plan
+   `test_gap_in_quarters_does_not_steepen_the_slope` bekliyordu ama o test
+   `_ols_slope`'u doğrudan çağırıyor; mutasyon `compute_trend`'in boru hattına
+   uygulandığı için `test_rising_series_yields_positive_slope_and_latest_level`
+   kırıldı. Mutasyonun amacı (boşluk farkındalığını yok etmek) yine de
+   yakalandı.
+
+Test sayıları README'de 64'e güncellendi ve "Doğrulama durumu" bloğuna dört
+mutasyonun sonucu, M3'ün kaçışı dahil, yazıldı.
+
+**Sıradaki:** Faz 2 — `EngineResult` sözleşmesi ve dört motor. Kendi planını
+ister. Üçlünün `score_universe`'e bağlanması da oraya ait.
