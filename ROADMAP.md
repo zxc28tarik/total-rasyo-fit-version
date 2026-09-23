@@ -93,9 +93,14 @@ Statik envanter (`research/tr2/legacy_ratio_inventory.json`) 67 skorlanan
 oranın tamamını legacy tanım dosyasının hash'iyle birlikte kaydeder. Üretici:
 `research/tr2/legacy_inventory.py`. Formül, yön, sektör, gerekli alan ve
 alanların dönem/kaynak etiketleri aktarılmıştır. Ekonomik tez, formül doğruluğu,
-PIT güvenliği, gerçekleşen coverage, IC ve KEEP/PORT/REWRITE/DELETE kararları
-**henüz ölçülmediği için boş** bırakılmıştır. `tests/tr2/test_legacy_inventory.py`
-67/67 kapsama ve uydurma karar bulunmaması için 2 test içerir. Bu envanter
+PIT güvenliği, gerçekleşen coverage ve IC **henüz ölçülmediği için boş**
+bırakılmıştır. Üç formül incelemesi `REWRITE` kararı aldı: `REVENUE_CAGR_3Y`
+yıllıklandırılmamış üç yıllık değişim; `EBITDA_YOY_GROWTH` ve
+`FCF_YOY_GROWTH` mevcut TTM ile önceki yılın tek çeyreğini karşılaştırıyor.
+Bu karar yalnız hatalı legacy formülün taşınamayacağını söyler; TR2 feature
+olarak kabul kararı değildir. Kalan 64 karar açık. `tests/tr2/test_legacy_inventory.py`
+67/67 kapsama, uydurma IC bulunmaması ve kaynak formül değişince yeniden
+inceleme gerekliliği için 3 test içerir. Bu envanter
 tam forensic audit değildir; kalan inceleme ve PIT OOS analizi açıktır.
 
 Her legacy ratio için tablo:

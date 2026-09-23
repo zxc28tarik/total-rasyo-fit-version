@@ -78,8 +78,9 @@ at or after its `snapshot_at`; it does not reconstruct historical availability.
 
 The legacy ratio audit starts with `research/tr2/legacy_ratio_inventory.json`.
 Its 67 entries copy only verifiable static definitions and source field labels;
-IC, PIT safety, economic judgments and KEEP/PORT/REWRITE/DELETE decisions are
-intentionally unset until audited with dated evidence.
+IC and PIT safety remain unset until audited with dated evidence. Three
+incorrect formulas have a `REWRITE` disposition; the other 64 decisions
+remain open. `REWRITE` does not mean the candidate passes TR2's OOS tests.
 
 > Aşağıdaki mevcut motor açıklaması tarihsel/legacy bağlamdır; TR2 tasarım kararı değildir.
 > Bir iş, ilgili `TR2-XXX` maddesi ve doğrulama kanıtı ROADMAP'te güncellenmeden
