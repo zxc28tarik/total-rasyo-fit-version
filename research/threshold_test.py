@@ -19,6 +19,7 @@ from ratio_engine.calc import compute_ratios_for_ticker
 from ratio_engine.scoring import RatioObservation, score_universe
 
 BARS = [0.50, 0.55, 0.60, 0.65]
+EVERY = int(os.environ.get("HOLD_MONTHS", "1"))
 
 qc = json.load(open(B.QUARTERLY, encoding="utf-8"))
 ac = json.load(open(B.ANNUAL, encoding="utf-8"))
@@ -29,7 +30,10 @@ tickers = {t for t, r in qc.items() if r.get("currency") == "TRY"} & set(ac)
 series = {t: B.build_quarters(qc[t], ac[t]) for t in tickers}
 prices = {t: {**ac[t]["prices"], **qc[t]["prices"]} for t in tickers}
 groups = {t: qc[t]["group"] for t in tickers}
-dates = B.month_ends(date(2025, 9, 30), date(2026, 9, 23)) + [date(2026, 9, 23)]
+dates = B.month_ends(date(2025, 9, 30), date(2026, 9, 23))
+dates = dates[::EVERY]
+if dates[-1] < date(2026, 9, 23):
+    dates = dates + [date(2026, 9, 23)]
 
 eq = {b: 1.0 for b in BARS}
 eq["top10"] = 1.0
@@ -105,7 +109,7 @@ for line in rows:
 
 print("")
 print("=" * 74)
-print("12 AY TOPLAM GETIRI (islem maliyeti haric)")
+print(f"12 AY TOPLAM GETIRI | elde tutma {EVERY} ay | maliyet haric")
 for b in BARS:
     print(f"  esik >{b:.2f} : {eq[b] - 1:+.1%}")
 print(f"  ilk 10     : {eq['top10'] - 1:+.1%}")
