@@ -5,6 +5,10 @@ __pycache__/
 venv/
 *.egg-info/
 
+# Licensed vendor exports and private TR2 snapshots stay outside Git.
+data/private/
+data/vendor/
+
 # Research harness data caches (fetched, not source)
 research/*.json
 research/board.csv

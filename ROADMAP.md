@@ -220,7 +220,7 @@ Gerekli:
 
 # TR2-022 — Immutable raw ingest
 
-**Durum: READY**
+**Durum: DONE — CSV snapshot çekirdeği; gerçek Pro+ export kanıtı TR2-021'de bekliyor**
 
 Her source snapshot:
 
@@ -239,6 +239,22 @@ parser_version
 saklamalı.
 
 Raw dosya overwrite edilmez.
+
+Uygulama kanıtı (`TR2-022`): `src/tr2/ingest.py` ham CSV baytlarını
+SHA256 adresli özel depoya kopyalar; her ingest için ayrı JSON manifest yazar.
+Timezone'suz export zamanı, bozuk CSV, yinelenen başlık veya güvensiz depo
+konumu reddedilir. `tests/tr2/test_ingest.py`: **7 passed**; tam repo:
+**112 passed** (2026-09-23 yerel çalışma). Gerçek InvestingPro+ dosyasının
+satır/sütun/şema receipt'i henüz yoktur; TR2-021 kapanmadan gerçek vendor
+entegrasyonu veya canonical mapping tamamlanmış sayılmaz. XLSX parserı gerçek
+dosya görülünce kararlaştırılacaktır.
+
+## TR2-023 — InvestingPro+ canonical field mapping
+
+**Durum: BLOCKED → TR2-021**
+
+Gerçek export başlıkları, kimlik alanları, birimler, dönem ve PIT anlamları
+görülmeden vendor alanları canonical feature'lara eşlenmeyecek.
 
 ---
 
