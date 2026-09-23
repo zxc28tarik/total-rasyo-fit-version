@@ -570,3 +570,4 @@ Paralel dış bağımlılık:
 - InvestingPro+ entegrasyonu yeni sistemin feature discovery katmanına bağlandı.
 - Roadmap'in her işlemde güncellenmesi zorunluluğu korundu.
 - README aktif yön bölümü greenfield reset'e geçirildi; legacy motor açıkça yalnız baseline olarak işaretlendi (`f3b0825`).
+- `DEVIR.md` eski kararların yanlışlıkla aktif kabul edilmesini önlemek için LEGACY/otorite değil olarak damgalandı (`9c7185a`).
