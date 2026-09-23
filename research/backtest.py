@@ -210,18 +210,29 @@ def main():
         bench_eq *= (1 + bench)
         held = set(picks)
 
+        pos_picks = sum(1 for t in picks if ret[t] > 0)
+        pos_uni = sum(1 for v in ret.values() if v > 0)
         log.append((t0, t1, used_pe, len(ret), gross, cost, net, bench,
-                    equity, bench_eq, picks))
+                    equity, bench_eq, picks, pos_picks, pos_uni, len(scored)))
 
-    print(f"{'donem':24}{'bilanco':12}{'n':>4}{'brut':>8}{'mlyt':>7}"
-          f"{'net':>8}{'evren':>8}{'portfoy':>9}{'endeks':>8}")
-    for (t0, t1, pe, n, g, c, net, b, eq, be, picks) in log:
-        print(f"{str(t0)}->{str(t1)}  {str(pe):12}{n:>4}"
-              f"{g:>+8.1%}{c:>7.2%}{net:>+8.1%}{b:>+8.1%}"
-              f"{eq:>9.3f}{be:>8.3f}")
+    print(f"{'donem':24}{'havuz':>6}{'sec+':>6}{'evren+':>8}"
+          f"{'evren+%':>9}{'sec+%':>8}{'brut':>8}{'net':>8}{'evren':>8}")
+    for (t0, t1, pe, n, g, c, net, b, eq, be, picks, pp, pu, pool) in log:
+        print(f"{str(t0)}->{str(t1)}  {pool:>6}{pp:>4}/10"
+              f"{pu:>5}/{n:<3}{100.0*pu/n:>8.0f}%{10.0*pp:>7.0f}%"
+              f"{g:>+8.1%}{net:>+8.1%}{b:>+8.1%}")
+
+    if log:
+        tp = sum(r[11] for r in log); tu = sum(r[12] for r in log)
+        tn = sum(r[3] for r in log); m = len(log)
+        print(chr(10) + f"  TOPLAM  secilen pozitif {tp}/{10*m} = {100.0*tp/(10*m):.0f}%"
+              f"   |   evren pozitif {tu}/{tn} = {100.0*tu/tn:.0f}%")
+        print(f"  Motorun secimi rastgeleyi {tp/(10.0*m) - tu/float(tn):+.1%} "
+              f"puan gecti (isabet orani farki)")
 
     print()
-    for (t0, t1, pe, n, g, c, net, b, eq, be, picks) in log:
+    for (t0, t1, pe, n, g, c, net, b, eq, be, picks, pp, pu, pool) in log:
+        ups = [t for t in picks if 0 < 1]  # placeholder replaced below
         print(f"  {t0} sectikleri: {', '.join(picks)}")
 
     if log:
