@@ -1,0 +1,3388 @@
+{
+  "status": "STATIC_INVENTORY_ONLY",
+  "source": {
+    "ratios_path": "config/ratios.v2.json",
+    "ratios_sha256": "3418502d1fee7146725ca7033ef537251727c50e56d73da6c15a75e6f18f1f11",
+    "fields_path": "config/ratio_fields.v2.json",
+    "fields_sha256": "6e12da04c11e6abf0c0e3cbe26f741ebb87b130097f98a87bffdcd6127951cd9"
+  },
+  "scored_ratio_count": 67,
+  "ratios": [
+    {
+      "ratio_name": "ACCRUALS_TO_ASSETS",
+      "formula": "(sum4q(net_income) - sum4q(cfo)) / avg(total_assets)",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "net_income",
+        "cfo",
+        "total_assets"
+      ],
+      "field_semantics": {
+        "net_income": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "total_assets": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "CASH_CONVERSION",
+      "domain_legacy": [
+        "avg(total_assets) > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": {
+        "weak": 0.1,
+        "strong": -0.02
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "ALTMAN_Z_SCORE",
+      "formula": "altman_z",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "altman_z"
+      ],
+      "field_semantics": {
+        "altman_z": {
+          "tier": "PROPLUS",
+          "flow": "MARKET"
+        }
+      },
+      "family_legacy": "DEBT_STRUCTURE",
+      "domain_legacy": [],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": {
+        "weak": 1.8,
+        "strong": 3.0
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "ASSET_TURNOVER",
+      "formula": "sum4q(revenue) / avg(total_assets)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "revenue",
+        "total_assets"
+      ],
+      "field_semantics": {
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "total_assets": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "ASSET_PRODUCTIVITY",
+      "domain_legacy": [
+        "avg(total_assets) > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "BENEISH_M_SCORE",
+      "formula": "beneish_m",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "beneish_m"
+      ],
+      "field_semantics": {
+        "beneish_m": {
+          "tier": "PROPLUS",
+          "flow": "MARKET"
+        }
+      },
+      "family_legacy": "CASH_CONVERSION",
+      "domain_legacy": [],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": {
+        "weak": -1.78,
+        "strong": -2.5
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "BVPS_GROWTH",
+      "formula": "((total_equity / shares_out) - (lag(total_equity, 4) / lag(shares_out, 4))) / abs(lag(total_equity, 4) / lag(shares_out, 4))",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "total_equity",
+        "shares_out"
+      ],
+      "field_semantics": {
+        "total_equity": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "shares_out": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "PER_SHARE",
+      "domain_legacy": [
+        "shares_out > 0",
+        "lag(shares_out, 4) > 0",
+        "lag(total_equity, 4) > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "CAPEX_TO_CFO",
+      "formula": "abs(sum4q(capex)) / sum4q(cfo)",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "capex",
+        "cfo"
+      ],
+      "field_semantics": {
+        "capex": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "CAPEX_INTENSITY",
+      "domain_legacy": [
+        "sum4q(cfo) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "CAPEX_TO_DA",
+      "formula": "abs(sum4q(capex)) / sum4q(depreciation_amortization)",
+      "direction": "BAND",
+      "sector_applicability": [
+        "GYO",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "capex",
+        "depreciation_amortization"
+      ],
+      "field_semantics": {
+        "capex": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "depreciation_amortization": {
+          "tier": "KAP_XBRL",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "CAPEX_INTENSITY",
+      "domain_legacy": [
+        "sum4q(depreciation_amortization) > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "CAPEX_TO_SALES",
+      "formula": "abs(sum4q(capex)) / sum4q(revenue)",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "capex",
+        "revenue"
+      ],
+      "field_semantics": {
+        "capex": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "CAPEX_INTENSITY",
+      "domain_legacy": [
+        "sum4q(revenue) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "CASH_RATIO",
+      "formula": "(cash_and_eq + st_investments) / current_liabilities",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "cash_and_eq",
+        "st_investments",
+        "current_liabilities"
+      ],
+      "field_semantics": {
+        "cash_and_eq": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "st_investments": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "current_liabilities": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "WORKING_CAPITAL",
+      "domain_legacy": [
+        "current_liabilities > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": {
+        "weak": 0.15,
+        "strong": 0.6
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "CASH_TO_ASSETS",
+      "formula": "(cash_and_eq + st_investments) / total_assets",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "cash_and_eq",
+        "st_investments",
+        "total_assets"
+      ],
+      "field_semantics": {
+        "cash_and_eq": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "st_investments": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "total_assets": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "CASH_BUFFER",
+      "domain_legacy": [
+        "total_assets > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "CASH_TO_ST_DEBT",
+      "formula": "(cash_and_eq + st_investments) / debt_st",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "cash_and_eq",
+        "st_investments",
+        "debt_st"
+      ],
+      "field_semantics": {
+        "cash_and_eq": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "st_investments": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "CASH_BUFFER",
+      "domain_legacy": [
+        "debt_st > 0"
+      ],
+      "out_of_domain_legacy": "BEST",
+      "anchor_legacy": {
+        "weak": 0.5,
+        "strong": 2.0
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "CCC_DAYS",
+      "formula": "DSO_DAYS + DIO_DAYS - DPO_DAYS",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "NONFIN"
+      ],
+      "required_fields": [
+        "receivables",
+        "revenue",
+        "inventory",
+        "cogs",
+        "accounts_payable"
+      ],
+      "field_semantics": {
+        "receivables": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "inventory": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cogs": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "accounts_payable": {
+          "tier": "KAP_XBRL",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "WC_CYCLE",
+      "domain_legacy": [],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "CFO_MARGIN",
+      "formula": "sum4q(cfo) / sum4q(revenue)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "cfo",
+        "revenue"
+      ],
+      "field_semantics": {
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "CASH_GENERATION",
+      "domain_legacy": [
+        "sum4q(revenue) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "CFO_TO_EBITDA",
+      "formula": "sum4q(cfo) / EBITDA_TTM",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "cfo",
+        "ebit",
+        "depreciation_amortization"
+      ],
+      "field_semantics": {
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "ebit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "depreciation_amortization": {
+          "tier": "KAP_XBRL",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "CASH_CONVERSION",
+      "domain_legacy": [
+        "EBITDA_TTM > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": {
+        "weak": 0.55,
+        "strong": 0.95
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "CFO_TO_NET_INCOME",
+      "formula": "sum4q(cfo) / sum4q(net_income)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "cfo",
+        "net_income"
+      ],
+      "field_semantics": {
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "net_income": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "CASH_CONVERSION",
+      "domain_legacy": [
+        "sum4q(net_income) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": {
+        "weak": 0.6,
+        "strong": 1.1
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "CFO_TO_TOTAL_DEBT",
+      "formula": "sum4q(cfo) / (nz(debt_st, 0) + nz(debt_lt, 0))",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "cfo",
+        "debt_st",
+        "debt_lt"
+      ],
+      "field_semantics": {
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "DEBT_SERVICE",
+      "domain_legacy": [
+        "(nz(debt_st, 0) + nz(debt_lt, 0)) > 0"
+      ],
+      "out_of_domain_legacy": "BEST",
+      "anchor_legacy": {
+        "weak": 0.15,
+        "strong": 0.45
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "CFO_YOY_GROWTH",
+      "formula": "(cfo - lag4q(cfo)) / abs(lag4q(cfo))",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "cfo"
+      ],
+      "field_semantics": {
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "BOTTOM_LINE",
+      "domain_legacy": [
+        "lag4q(cfo) != 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "CURRENT_RATIO",
+      "formula": "current_assets / current_liabilities",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "current_assets",
+        "current_liabilities"
+      ],
+      "field_semantics": {
+        "current_assets": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "current_liabilities": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "WORKING_CAPITAL",
+      "domain_legacy": [
+        "current_liabilities > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": {
+        "weak": 1.0,
+        "strong": 2.0
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "DEBT_TO_CAPITAL",
+      "formula": "(nz(debt_st, 0) + nz(debt_lt, 0)) / ((nz(debt_st, 0) + nz(debt_lt, 0)) + total_equity)",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "debt_st",
+        "debt_lt",
+        "total_equity"
+      ],
+      "field_semantics": {
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "total_equity": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "DEBT_LEVEL",
+      "domain_legacy": [
+        "total_equity > 0",
+        "(nz(debt_st, 0) + nz(debt_lt, 0)) + total_equity > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": {
+        "weak": 0.6,
+        "strong": 0.25
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "DEBT_TO_EQUITY",
+      "formula": "(nz(debt_st, 0) + nz(debt_lt, 0)) / total_equity",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "debt_st",
+        "debt_lt",
+        "total_equity"
+      ],
+      "field_semantics": {
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "total_equity": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "DEBT_LEVEL",
+      "domain_legacy": [
+        "total_equity > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": {
+        "weak": 1.5,
+        "strong": 0.4
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "DIO_DAYS",
+      "formula": "(avg(inventory) / sum4q(cogs)) * 365",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "NONFIN"
+      ],
+      "required_fields": [
+        "inventory",
+        "cogs"
+      ],
+      "field_semantics": {
+        "inventory": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cogs": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "WC_CYCLE",
+      "domain_legacy": [
+        "sum4q(cogs) > 0",
+        "avg(inventory) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "DIVIDEND_YIELD",
+      "formula": "sum4q(dividends_paid) / MARKET_CAP",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "dividends_paid",
+        "price",
+        "shares_out"
+      ],
+      "field_semantics": {
+        "dividends_paid": {
+          "tier": "KAP_XBRL",
+          "flow": "PERIOD"
+        },
+        "price": {
+          "tier": "CURRENT",
+          "flow": "MARKET"
+        },
+        "shares_out": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "YIELD",
+      "domain_legacy": [
+        "MARKET_CAP > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "DPO_DAYS",
+      "formula": "(avg(accounts_payable) / sum4q(cogs)) * 365",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "NONFIN"
+      ],
+      "required_fields": [
+        "accounts_payable",
+        "cogs"
+      ],
+      "field_semantics": {
+        "accounts_payable": {
+          "tier": "KAP_XBRL",
+          "flow": "POINT"
+        },
+        "cogs": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "WC_CYCLE",
+      "domain_legacy": [
+        "sum4q(cogs) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "DSO_DAYS",
+      "formula": "(avg(receivables) / sum4q(revenue)) * 365",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "NONFIN"
+      ],
+      "required_fields": [
+        "receivables",
+        "revenue"
+      ],
+      "field_semantics": {
+        "receivables": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "WC_CYCLE",
+      "domain_legacy": [
+        "sum4q(revenue) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "EBITDA_INTEREST_COVERAGE",
+      "formula": "EBITDA_TTM / sum4q(interest_exp)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "ebit",
+        "depreciation_amortization",
+        "interest_exp"
+      ],
+      "field_semantics": {
+        "ebit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "depreciation_amortization": {
+          "tier": "KAP_XBRL",
+          "flow": "PERIOD"
+        },
+        "interest_exp": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "DEBT_SERVICE",
+      "domain_legacy": [
+        "sum4q(interest_exp) > 0"
+      ],
+      "out_of_domain_legacy": "BEST",
+      "anchor_legacy": {
+        "weak": 3.0,
+        "strong": 10.0
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "EBITDA_MARGIN",
+      "formula": "EBITDA_TTM / sum4q(revenue)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "ebit",
+        "depreciation_amortization",
+        "revenue"
+      ],
+      "field_semantics": {
+        "ebit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "depreciation_amortization": {
+          "tier": "KAP_XBRL",
+          "flow": "PERIOD"
+        },
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "MARGIN",
+      "domain_legacy": [
+        "sum4q(revenue) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "EBITDA_YOY_GROWTH",
+      "formula": "(EBITDA_TTM - (lag(ebit, 4) + lag(depreciation_amortization, 4))) / abs(lag(ebit, 4) + lag(depreciation_amortization, 4))",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "ebit",
+        "depreciation_amortization"
+      ],
+      "field_semantics": {
+        "ebit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "depreciation_amortization": {
+          "tier": "KAP_XBRL",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "BOTTOM_LINE",
+      "domain_legacy": [
+        "(lag(ebit, 4) + lag(depreciation_amortization, 4)) != 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "EBIT_YOY_GROWTH",
+      "formula": "(ebit - lag4q(ebit)) / abs(lag4q(ebit))",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "ebit"
+      ],
+      "field_semantics": {
+        "ebit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "BOTTOM_LINE",
+      "domain_legacy": [
+        "lag4q(ebit) != 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "EPS_YOY_GROWTH",
+      "formula": "((net_income / shares_diluted) - (lag4q(net_income) / lag(shares_diluted, 4))) / abs(lag4q(net_income) / lag(shares_diluted, 4))",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "net_income",
+        "shares_diluted"
+      ],
+      "field_semantics": {
+        "net_income": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "shares_diluted": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "PER_SHARE",
+      "domain_legacy": [
+        "shares_diluted > 0",
+        "lag(shares_diluted, 4) > 0",
+        "lag4q(net_income) != 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "EV_EBIT",
+      "formula": "EV / sum4q(ebit)",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "price",
+        "shares_out",
+        "debt_st",
+        "debt_lt",
+        "cash_and_eq",
+        "st_investments",
+        "ebit"
+      ],
+      "field_semantics": {
+        "price": {
+          "tier": "CURRENT",
+          "flow": "MARKET"
+        },
+        "shares_out": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cash_and_eq": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "st_investments": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "ebit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "EARNINGS_MULTIPLE",
+      "domain_legacy": [
+        "sum4q(ebit) > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "EV_EBITDA",
+      "formula": "EV / EBITDA_TTM",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "price",
+        "shares_out",
+        "debt_st",
+        "debt_lt",
+        "cash_and_eq",
+        "st_investments",
+        "ebit",
+        "depreciation_amortization"
+      ],
+      "field_semantics": {
+        "price": {
+          "tier": "CURRENT",
+          "flow": "MARKET"
+        },
+        "shares_out": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cash_and_eq": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "st_investments": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "ebit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "depreciation_amortization": {
+          "tier": "KAP_XBRL",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "EARNINGS_MULTIPLE",
+      "domain_legacy": [
+        "EBITDA_TTM > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "EV_SALES",
+      "formula": "EV / sum4q(revenue)",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "price",
+        "shares_out",
+        "debt_st",
+        "debt_lt",
+        "cash_and_eq",
+        "st_investments",
+        "revenue"
+      ],
+      "field_semantics": {
+        "price": {
+          "tier": "CURRENT",
+          "flow": "MARKET"
+        },
+        "shares_out": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cash_and_eq": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "st_investments": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "CASHFLOW_MULTIPLE",
+      "domain_legacy": [
+        "sum4q(revenue) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "EV_TO_ASSETS",
+      "formula": "EV / avg(total_assets)",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "price",
+        "shares_out",
+        "debt_st",
+        "debt_lt",
+        "cash_and_eq",
+        "st_investments",
+        "total_assets"
+      ],
+      "field_semantics": {
+        "price": {
+          "tier": "CURRENT",
+          "flow": "MARKET"
+        },
+        "shares_out": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cash_and_eq": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "st_investments": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "total_assets": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "ASSET_MULTIPLE",
+      "domain_legacy": [
+        "avg(total_assets) > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "FCF_MARGIN",
+      "formula": "FCF_TTM / sum4q(revenue)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "cfo",
+        "capex",
+        "revenue"
+      ],
+      "field_semantics": {
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "capex": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "CASH_GENERATION",
+      "domain_legacy": [
+        "sum4q(revenue) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "FCF_TO_ASSETS",
+      "formula": "FCF_TTM / avg(total_assets)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "cfo",
+        "capex",
+        "total_assets"
+      ],
+      "field_semantics": {
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "capex": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "total_assets": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "CASH_GENERATION",
+      "domain_legacy": [
+        "avg(total_assets) > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "FCF_YIELD",
+      "formula": "FCF_TTM / MARKET_CAP",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "cfo",
+        "capex",
+        "price",
+        "shares_out"
+      ],
+      "field_semantics": {
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "capex": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "price": {
+          "tier": "CURRENT",
+          "flow": "MARKET"
+        },
+        "shares_out": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "YIELD",
+      "domain_legacy": [
+        "MARKET_CAP > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "FCF_YOY_GROWTH",
+      "formula": "(FCF_TTM - (lag(cfo, 4) - abs(lag(capex, 4)))) / abs(lag(cfo, 4) - abs(lag(capex, 4)))",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "cfo",
+        "capex"
+      ],
+      "field_semantics": {
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "capex": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "BOTTOM_LINE",
+      "domain_legacy": [
+        "(lag(cfo, 4) - abs(lag(capex, 4))) != 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "FIXED_ASSET_TURNOVER",
+      "formula": "sum4q(revenue) / avg(net_ppe)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "NONFIN"
+      ],
+      "required_fields": [
+        "revenue",
+        "net_ppe"
+      ],
+      "field_semantics": {
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "net_ppe": {
+          "tier": "KAP_XBRL",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "ASSET_PRODUCTIVITY",
+      "domain_legacy": [
+        "avg(net_ppe) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "FX_DEBT_RATIO",
+      "formula": "max(fx_debt - nz(fx_revenue, 0), 0) / (nz(debt_st, 0) + nz(debt_lt, 0))",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "fx_debt",
+        "debt_st",
+        "debt_lt"
+      ],
+      "field_semantics": {
+        "fx_debt": {
+          "tier": "KAP_FOOTNOTE",
+          "flow": "POINT"
+        },
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "DEBT_STRUCTURE",
+      "domain_legacy": [
+        "(nz(debt_st, 0) + nz(debt_lt, 0)) > 0"
+      ],
+      "out_of_domain_legacy": "BEST",
+      "anchor_legacy": {
+        "weak": 0.5,
+        "strong": 0.1
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "GROSS_MARGIN",
+      "formula": "sum4q(gross_profit) / sum4q(revenue)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "gross_profit",
+        "revenue"
+      ],
+      "field_semantics": {
+        "gross_profit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "MARGIN",
+      "domain_legacy": [
+        "sum4q(revenue) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "INTEREST_COVERAGE",
+      "formula": "sum4q(ebit) / sum4q(interest_exp)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "ebit",
+        "interest_exp"
+      ],
+      "field_semantics": {
+        "ebit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "interest_exp": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "DEBT_SERVICE",
+      "domain_legacy": [
+        "sum4q(interest_exp) > 0"
+      ],
+      "out_of_domain_legacy": "BEST",
+      "anchor_legacy": {
+        "weak": 2.0,
+        "strong": 8.0
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "LEASE_ADJ_NET_DEBT_TO_EBITDA",
+      "formula": "(NET_DEBT + nz(lease_liabilities, 0)) / EBITDA_TTM",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "debt_st",
+        "debt_lt",
+        "cash_and_eq",
+        "st_investments",
+        "lease_liabilities",
+        "ebit",
+        "depreciation_amortization"
+      ],
+      "field_semantics": {
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cash_and_eq": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "st_investments": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "lease_liabilities": {
+          "tier": "KAP_XBRL",
+          "flow": "POINT"
+        },
+        "ebit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "depreciation_amortization": {
+          "tier": "KAP_XBRL",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "DEBT_STRUCTURE",
+      "domain_legacy": [
+        "EBITDA_TTM > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": {
+        "weak": 4.5,
+        "strong": 1.5
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "NET_DEBT_TO_EBITDA",
+      "formula": "NET_DEBT / EBITDA_TTM",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "debt_st",
+        "debt_lt",
+        "cash_and_eq",
+        "st_investments",
+        "ebit",
+        "depreciation_amortization"
+      ],
+      "field_semantics": {
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cash_and_eq": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "st_investments": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "ebit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "depreciation_amortization": {
+          "tier": "KAP_XBRL",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "DEBT_LEVEL",
+      "domain_legacy": [
+        "EBITDA_TTM > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": {
+        "weak": 4.0,
+        "strong": 1.0
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "NET_DEBT_TO_EQUITY",
+      "formula": "NET_DEBT / total_equity",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "debt_st",
+        "debt_lt",
+        "cash_and_eq",
+        "st_investments",
+        "total_equity"
+      ],
+      "field_semantics": {
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cash_and_eq": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "st_investments": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "total_equity": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "DEBT_LEVEL",
+      "domain_legacy": [
+        "total_equity > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": {
+        "weak": 1.0,
+        "strong": 0.0
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "NET_INCOME_YOY_GROWTH",
+      "formula": "(net_income - lag4q(net_income)) / abs(lag4q(net_income))",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "net_income"
+      ],
+      "field_semantics": {
+        "net_income": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "BOTTOM_LINE",
+      "domain_legacy": [
+        "lag4q(net_income) != 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "NET_MARGIN",
+      "formula": "sum4q(net_income) / sum4q(revenue)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "net_income",
+        "revenue"
+      ],
+      "field_semantics": {
+        "net_income": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "MARGIN",
+      "domain_legacy": [
+        "sum4q(revenue) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "OCF_TO_CL",
+      "formula": "sum4q(cfo) / current_liabilities",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "cfo",
+        "current_liabilities"
+      ],
+      "field_semantics": {
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "current_liabilities": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "CASH_BUFFER",
+      "domain_legacy": [
+        "current_liabilities > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "OPERATING_MARGIN",
+      "formula": "sum4q(ebit) / sum4q(revenue)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "ebit",
+        "revenue"
+      ],
+      "field_semantics": {
+        "ebit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "MARGIN",
+      "domain_legacy": [
+        "sum4q(revenue) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "PAYOUT_RATIO",
+      "formula": "sum4q(dividends_paid) / sum4q(net_income)",
+      "direction": "BAND",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "dividends_paid",
+        "net_income"
+      ],
+      "field_semantics": {
+        "dividends_paid": {
+          "tier": "KAP_XBRL",
+          "flow": "PERIOD"
+        },
+        "net_income": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "YIELD",
+      "domain_legacy": [
+        "sum4q(net_income) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "PB",
+      "formula": "MARKET_CAP / total_equity",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "price",
+        "shares_out",
+        "total_equity"
+      ],
+      "field_semantics": {
+        "price": {
+          "tier": "CURRENT",
+          "flow": "MARKET"
+        },
+        "shares_out": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "total_equity": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "ASSET_MULTIPLE",
+      "domain_legacy": [
+        "total_equity > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "PE_FWD",
+      "formula": "price / eps_fwd_1y",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "price",
+        "eps_fwd_1y"
+      ],
+      "field_semantics": {
+        "price": {
+          "tier": "CURRENT",
+          "flow": "MARKET"
+        },
+        "eps_fwd_1y": {
+          "tier": "PROPLUS",
+          "flow": "MARKET"
+        }
+      },
+      "family_legacy": "EARNINGS_MULTIPLE",
+      "domain_legacy": [
+        "eps_fwd_1y > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "PE_TTM",
+      "formula": "MARKET_CAP / sum4q(net_income)",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "price",
+        "shares_out",
+        "net_income"
+      ],
+      "field_semantics": {
+        "price": {
+          "tier": "CURRENT",
+          "flow": "MARKET"
+        },
+        "shares_out": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "net_income": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "EARNINGS_MULTIPLE",
+      "domain_legacy": [
+        "sum4q(net_income) > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "P_CFO",
+      "formula": "MARKET_CAP / sum4q(cfo)",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "price",
+        "shares_out",
+        "cfo"
+      ],
+      "field_semantics": {
+        "price": {
+          "tier": "CURRENT",
+          "flow": "MARKET"
+        },
+        "shares_out": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "CASHFLOW_MULTIPLE",
+      "domain_legacy": [
+        "sum4q(cfo) > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "P_FCF",
+      "formula": "MARKET_CAP / FCF_TTM",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "price",
+        "shares_out",
+        "cfo",
+        "capex"
+      ],
+      "field_semantics": {
+        "price": {
+          "tier": "CURRENT",
+          "flow": "MARKET"
+        },
+        "shares_out": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "capex": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "CASHFLOW_MULTIPLE",
+      "domain_legacy": [
+        "FCF_TTM > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "P_TANGIBLE_BOOK",
+      "formula": "MARKET_CAP / TANGIBLE_BOOK",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "price",
+        "shares_out",
+        "total_equity",
+        "intangibles_goodwill"
+      ],
+      "field_semantics": {
+        "price": {
+          "tier": "CURRENT",
+          "flow": "MARKET"
+        },
+        "shares_out": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "total_equity": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "intangibles_goodwill": {
+          "tier": "KAP_XBRL",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "ASSET_MULTIPLE",
+      "domain_legacy": [
+        "TANGIBLE_BOOK > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "QUICK_RATIO",
+      "formula": "(current_assets - nz(inventory, 0)) / current_liabilities",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "GYO",
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "current_assets",
+        "current_liabilities"
+      ],
+      "field_semantics": {
+        "current_assets": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "current_liabilities": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "WORKING_CAPITAL",
+      "domain_legacy": [
+        "current_liabilities > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": {
+        "weak": 0.7,
+        "strong": 1.3
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "REFINANCING_WALL",
+      "formula": "debt_st / (cash_and_eq + st_investments + max(sum4q(cfo), 0))",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "debt_st",
+        "cash_and_eq",
+        "st_investments",
+        "cfo"
+      ],
+      "field_semantics": {
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cash_and_eq": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "st_investments": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cfo": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "DEBT_SERVICE",
+      "domain_legacy": [
+        "(cash_and_eq + st_investments + max(sum4q(cfo), 0)) > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": {
+        "weak": 1.5,
+        "strong": 0.5
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "REVENUE_CAGR_3Y",
+      "formula": "(revenue / lag(revenue, 12)) - 1",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "revenue"
+      ],
+      "field_semantics": {
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "TOP_LINE",
+      "domain_legacy": [
+        "lag(revenue, 12) > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "REVENUE_FWD_GROWTH",
+      "formula": "(revenue_fwd_1y - sum4q(revenue)) / abs(sum4q(revenue))",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "revenue_fwd_1y",
+        "revenue"
+      ],
+      "field_semantics": {
+        "revenue_fwd_1y": {
+          "tier": "PROPLUS",
+          "flow": "MARKET"
+        },
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "TOP_LINE",
+      "domain_legacy": [
+        "sum4q(revenue) > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "REVENUE_YOY_GROWTH",
+      "formula": "(revenue - lag4q(revenue)) / abs(lag4q(revenue))",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "revenue"
+      ],
+      "field_semantics": {
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "TOP_LINE",
+      "domain_legacy": [
+        "lag4q(revenue) != 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "ROA",
+      "formula": "sum4q(net_income) / avg(total_assets)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "net_income",
+        "total_assets"
+      ],
+      "field_semantics": {
+        "net_income": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "total_assets": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "RETURN_ON_CAPITAL",
+      "domain_legacy": [
+        "avg(total_assets) > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "ROCE",
+      "formula": "sum4q(ebit) / INVESTED_CAPITAL",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "ebit",
+        "total_equity",
+        "debt_st",
+        "debt_lt",
+        "cash_and_eq"
+      ],
+      "field_semantics": {
+        "ebit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "total_equity": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cash_and_eq": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "RETURN_ON_CAPITAL",
+      "domain_legacy": [
+        "INVESTED_CAPITAL > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "ROE",
+      "formula": "sum4q(net_income) / avg(total_equity)",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "net_income",
+        "total_equity"
+      ],
+      "field_semantics": {
+        "net_income": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "total_equity": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "RETURN_ON_CAPITAL",
+      "domain_legacy": [
+        "avg(total_equity) > 0"
+      ],
+      "out_of_domain_legacy": "WORST",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "ROIC",
+      "formula": "NOPAT / INVESTED_CAPITAL",
+      "direction": "HIGHER_BETTER",
+      "sector_applicability": [
+        "HOLDING",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "ebit",
+        "tax_expense",
+        "pretax_income",
+        "total_equity",
+        "debt_st",
+        "debt_lt",
+        "cash_and_eq"
+      ],
+      "field_semantics": {
+        "ebit": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        },
+        "tax_expense": {
+          "tier": "KAP_XBRL",
+          "flow": "PERIOD"
+        },
+        "pretax_income": {
+          "tier": "KAP_XBRL",
+          "flow": "PERIOD"
+        },
+        "total_equity": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "cash_and_eq": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "RETURN_ON_CAPITAL",
+      "domain_legacy": [
+        "INVESTED_CAPITAL > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "SHARE_COUNT_GROWTH",
+      "formula": "(shares_out - lag4q(shares_out)) / lag4q(shares_out)",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "BANK",
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "shares_out"
+      ],
+      "field_semantics": {
+        "shares_out": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "PER_SHARE",
+      "domain_legacy": [
+        "lag4q(shares_out) > 0"
+      ],
+      "out_of_domain_legacy": "MISSING",
+      "anchor_legacy": {
+        "weak": 0.05,
+        "strong": 0.0
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "ST_DEBT_RATIO",
+      "formula": "debt_st / (nz(debt_st, 0) + nz(debt_lt, 0))",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "FINANCIAL",
+        "GYO",
+        "HOLDING",
+        "INSURANCE",
+        "NONFIN"
+      ],
+      "required_fields": [
+        "debt_st",
+        "debt_lt"
+      ],
+      "field_semantics": {
+        "debt_st": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "debt_lt": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        }
+      },
+      "family_legacy": "DEBT_STRUCTURE",
+      "domain_legacy": [
+        "(nz(debt_st, 0) + nz(debt_lt, 0)) > 0"
+      ],
+      "out_of_domain_legacy": "BEST",
+      "anchor_legacy": {
+        "weak": 0.7,
+        "strong": 0.25
+      },
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    },
+    {
+      "ratio_name": "WC_TO_SALES",
+      "formula": "(avg(current_assets) - avg(current_liabilities)) / sum4q(revenue)",
+      "direction": "LOWER_BETTER",
+      "sector_applicability": [
+        "NONFIN"
+      ],
+      "required_fields": [
+        "current_assets",
+        "current_liabilities",
+        "revenue"
+      ],
+      "field_semantics": {
+        "current_assets": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "current_liabilities": {
+          "tier": "CURRENT",
+          "flow": "POINT"
+        },
+        "revenue": {
+          "tier": "CURRENT",
+          "flow": "PERIOD"
+        }
+      },
+      "family_legacy": "ASSET_PRODUCTIVITY",
+      "domain_legacy": [
+        "sum4q(revenue) > 0"
+      ],
+      "out_of_domain_legacy": "NOT_APPLICABLE",
+      "anchor_legacy": null,
+      "economic_thesis": null,
+      "formula_correctness": null,
+      "period_semantics_review": null,
+      "pit_safety": null,
+      "inflation_sensitivity": null,
+      "accounting_caveats": null,
+      "outlier_behavior": null,
+      "coverage": null,
+      "redundancy_cluster": null,
+      "univariate_forward_ic": null,
+      "rolling_ic": null,
+      "incremental_ic": null,
+      "decision": null,
+      "reason": null
+    }
+  ]
+}

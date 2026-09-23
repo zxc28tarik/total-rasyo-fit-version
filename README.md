@@ -76,6 +76,11 @@ record what the caller supplied for filters and universe; actual UI settings
 must be checked against the export receipt. A current snapshot is usable only
 at or after its `snapshot_at`; it does not reconstruct historical availability.
 
+The legacy ratio audit starts with `research/tr2/legacy_ratio_inventory.json`.
+Its 67 entries copy only verifiable static definitions and source field labels;
+IC, PIT safety, economic judgments and KEEP/PORT/REWRITE/DELETE decisions are
+intentionally unset until audited with dated evidence.
+
 > Aşağıdaki mevcut motor açıklaması tarihsel/legacy bağlamdır; TR2 tasarım kararı değildir.
 > Bir iş, ilgili `TR2-XXX` maddesi ve doğrulama kanıtı ROADMAP'te güncellenmeden
 > `DONE` sayılamaz.
