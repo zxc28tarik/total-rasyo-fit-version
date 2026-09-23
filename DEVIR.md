@@ -1,3 +1,11 @@
+> [!WARNING]
+> **LEGACY / TARİHSEL BELGE — AKTİF TASARIM OTORİTESİ DEĞİLDİR.**
+> 2026-09-23 greenfield reset sonrası bu dosyadaki mimari kararlar, oran setleri,
+> InvestingPro durumu ve uygulama sırası otomatik olarak geçerli kabul edilmez.
+> InvestingPro+ üyeliği artık mevcuttur. Güncel tek plan `ROADMAP.md`, güncel
+> mimari `docs/TOTAL_RASYO_2_0_MIMARI.md` dosyasıdır. Legacy parçalar yalnız
+> KEEP / PORT / REWRITE / DELETE auditi sonrası TR2'ye taşınabilir.
+
 # DEVİR DÖKÜMANI — total-rasyo-fit-version
 
 Bu belge, Total Rasyo Hesaplayıcı projesinde başlayıp ayrı bir projeye evrilen
