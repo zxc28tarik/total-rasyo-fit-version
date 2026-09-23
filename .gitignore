@@ -4,3 +4,6 @@ __pycache__/
 .venv/
 venv/
 *.egg-info/
+
+# Research harness data caches (fetched, not source)
+research/*.json
