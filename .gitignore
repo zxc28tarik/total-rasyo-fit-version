@@ -7,3 +7,4 @@ venv/
 
 # Research harness data caches (fetched, not source)
 research/*.json
+research/board.csv
