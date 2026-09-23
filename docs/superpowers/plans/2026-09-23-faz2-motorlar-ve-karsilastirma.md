@@ -2,7 +2,7 @@
 
 > **Ajan çalışanlar için:** GEREKLİ ALT SKILL: Bu planı görev görev uygulamak
 > için superpowers:subagent-driven-development (önerilen) veya
-> superpowers:executing-plans kullan. Adımlar takip için checkbox (`- [ ]`)
+> superpowers:executing-plans kullan. Adımlar takip için checkbox (`- [x]`)
 > sözdizimi kullanır.
 
 **Hedef:** Projenin varış noktası olan ekranı çalışır hale getirmek — tek satır
@@ -96,7 +96,7 @@ fazda ikisi de saf stdlib kalır.
 - Oluştur: `src/engines/__init__.py`, `src/engines/base.py`
 - Test: `tests/test_engine_base.py`
 
-- [ ] **Adım 1: Başarısız testi yaz**
+- [x] **Adım 1: Başarısız testi yaz**
 
 ```python
 import pytest
@@ -145,7 +145,7 @@ def test_coverage_outside_zero_one_is_rejected():
                      axes={}, gates={}, coverage=1.4, notes=())
 ```
 
-- [ ] **Adım 2: Testi koş, başarısız olduğunu gör**
+- [x] **Adım 2: Testi koş, başarısız olduğunu gör**
 
 Çalıştır: `python -m pytest tests/test_engine_base.py -q`
 
@@ -155,7 +155,7 @@ Burada `pythonpath` doğrulanır: `pytest.ini` `pythonpath = src .` diyor,
 `src/engines/` de `src` altında olduğu için ek ayar gerekmemeli. Gerekiyorsa
 `pytest.ini` bu adımda düzeltilir.
 
-- [ ] **Adım 3: Asgari uygulamayı yaz**
+- [x] **Adım 3: Asgari uygulamayı yaz**
 
 `src/engines/base.py`:
 
@@ -232,13 +232,13 @@ class Engine(Protocol):
 `TickerResult` için `TYPE_CHECKING` altında
 `from ratio_engine.scoring import TickerResult` kullan.
 
-- [ ] **Adım 4: Testi koş, geçtiğini gör**
+- [x] **Adım 4: Testi koş, geçtiğini gör**
 
 Çalıştır: `python -m pytest tests/test_engine_base.py -q`
 
 Beklenen: 6 passed
 
-- [ ] **Adım 5: Commit**
+- [x] **Adım 5: Commit**
 
 ```bash
 git add src/engines tests/test_engine_base.py
@@ -255,7 +255,7 @@ git commit -m "feat(engines): define the EngineResult contract"
 
 K15'i koda çeviren yer burası: kapılar **çarpılır**, toplanmaz.
 
-- [ ] **Adım 1: Başarısız testi yaz**
+- [x] **Adım 1: Başarısız testi yaz**
 
 ```python
 from engines.base import apply_gates
@@ -288,13 +288,13 @@ def test_a_cheap_value_cannot_buy_its_way_past_a_veto():
     assert cheap_and_vetoed < dear_and_clean
 ```
 
-- [ ] **Adım 2: Testi koş, başarısız olduğunu gör**
+- [x] **Adım 2: Testi koş, başarısız olduğunu gör**
 
 Çalıştır: `python -m pytest tests/test_engine_base.py -q -k gate`
 
 Beklenen: FAIL — `ImportError: cannot import name 'apply_gates'`
 
-- [ ] **Adım 3: Asgari uygulamayı yaz**
+- [x] **Adım 3: Asgari uygulamayı yaz**
 
 ```python
 GATED_BELOW = 1e-9
@@ -333,13 +333,13 @@ def weigh_axes(axes: Mapping[str, float], weights: Mapping[str, float]) -> float
     return sum(axes[k] * weights[k] for k in weights)
 ```
 
-- [ ] **Adım 4: Testi koş, geçtiğini gör**
+- [x] **Adım 4: Testi koş, geçtiğini gör**
 
 Çalıştır: `python -m pytest tests/test_engine_base.py -q`
 
 Beklenen: 10 passed
 
-- [ ] **Adım 5: Commit**
+- [x] **Adım 5: Commit**
 
 ```bash
 git add src/engines/base.py tests/test_engine_base.py
@@ -357,14 +357,14 @@ git commit -m "feat(engines): multiply gates, refuse to renormalise axes"
 Tek eksen: `value` kompoziti. Kapı: `G_muhasebe`. Ucuzluğun muhasebe kalitesiyle
 kesişmesi bu motorun tüm tezi — ucuz ama tahakkuku şişkin şirket değer tuzağıdır.
 
-- [ ] **Adım 1: Fikstürü yaz**
+- [x] **Adım 1: Fikstürü yaz**
 
 `tests/_fixtures.py` sonuna: `TickerResult`/`CompositeResult` üreten
 `universe_of(...)` yardımcısı. Gerçek `score_universe` çıktısının şeklini
 taklit etmeli — `composites` sözlüğü `quality`/`growth`/`value` anahtarlarını,
 `ratio_scores` ise rasyo adı → skor eşlemesini taşır.
 
-- [ ] **Adım 2: Başarısız testi yaz**
+- [x] **Adım 2: Başarısız testi yaz**
 
 ```python
 def test_cheapest_company_scores_highest():
@@ -381,9 +381,9 @@ def test_an_unmeasurable_accruals_ratio_passes_the_gate_but_is_noted():
     ...
 ```
 
-- [ ] **Adım 3: Testi koş, başarısız olduğunu gör**
+- [x] **Adım 3: Testi koş, başarısız olduğunu gör**
 
-- [ ] **Adım 4: Motoru yaz**
+- [x] **Adım 4: Motoru yaz**
 
 Eşik kararı — **K23:** `ACCRUALS_TO_ASSETS` skoru `0.20`'nin altındaysa
 `G_muhasebe = 0.0`, üstündeyse `1.0`. Sert kapı, yumuşak geçiş yok.
@@ -392,9 +392,9 @@ Doğrulanmamış sabit; DEVIR.md bölüm 7 listesine aynı statüde eklenir.
 zaman kapı olmaktan çıkıp beşinci bir eksen olurdu ve K13'ün çift sayma
 itirazı burada da geçerlidir.
 
-- [ ] **Adım 5: Testi koş, geçtiğini gör**
+- [x] **Adım 5: Testi koş, geçtiğini gör**
 
-- [ ] **Adım 6: Commit**
+- [x] **Adım 6: Commit**
 
 ---
 
@@ -409,7 +409,7 @@ itirazı burada da geçerlidir.
 katmanının türettiği üçlünün üçüncü bileşenidir" kararının ilk gerçek tüketicisi
 budur.
 
-- [ ] **Adım 1: Başarısız testi yaz**
+- [x] **Adım 1: Başarısız testi yaz**
 
 ```python
 def test_steady_margins_beat_erratic_ones_at_equal_level():
@@ -423,7 +423,7 @@ def test_a_company_without_enough_quarters_loses_only_the_stability_axis():
     ...
 ```
 
-- [ ] **Adım 2–3: Koş, motoru yaz**
+- [x] **Adım 2–3: Koş, motoru yaz**
 
 **K24 — Eksen ölçülemiyorsa motor `MISSING` döner, kalan eksene kaçmaz.**
 `weigh_axes` zaten eksen/ağırlık uyuşmazlığında hata veriyor; motor bunu
@@ -436,7 +436,7 @@ Marj ailesinden, nakit temelli olduğu için tahakkuk oyunlarına en az açık o
 Doğrulanmamış seçim. **Reddedilen:** tüm PROFIT rasyolarının istikrarını
 ortalamak — aralarında yüksek korelasyon var, ortalamanın taşıdığı ek bilgi az.
 
-- [ ] **Adım 4–5: Testi geçir, commit**
+- [x] **Adım 4–5: Testi geçir, commit**
 
 ---
 
@@ -446,7 +446,7 @@ ortalamak — aralarında yüksek korelasyon var, ortalamanın taşıdığı ek 
 - Oluştur: `src/board/__init__.py`, `src/board/comparison.py`
 - Test: `tests/test_comparison.py`
 
-- [ ] **Adım 1: Başarısız testi yaz**
+- [x] **Adım 1: Başarısız testi yaz**
 
 ```python
 def test_each_engine_ranks_independently():
@@ -469,7 +469,7 @@ def test_ties_break_deterministically_by_ticker():
 hatası ikisini aynı kovaya atmaktı ve bu projenin kuruluş gerekçesi tam olarak
 bu ayrımdı.
 
-- [ ] **Adım 2–5: Koş, yaz, geçir, commit**
+- [x] **Adım 2–5: Koş, yaz, geçir, commit**
 
 ---
 
@@ -481,7 +481,7 @@ bu ayrımdı.
 
 Kullanıcının asıl istediği iki liste.
 
-- [ ] **Adım 1: Başarısız testi yaz**
+- [x] **Adım 1: Başarısız testi yaz**
 
 ```python
 def test_consensus_lists_names_every_engine_ranks_highly():
@@ -506,7 +506,7 @@ Sıralar aynı evrende tanımlı. **Reddedilen:** skor farkı eşiği.
 **K28 — Uzlaşma en az iki motor gerektirir.** Tek motorun skorlayabildiği
 şirket ne uzlaşmadır ne ayrışma; ayrı bir "tek görüş" kovasına düşer.
 
-- [ ] **Adım 2–5: Koş, yaz, geçir, commit**
+- [x] **Adım 2–5: Koş, yaz, geçir, commit**
 
 ---
 
@@ -519,7 +519,7 @@ Sıralar aynı evrende tanımlı. **Reddedilen:** skor farkı eşiği.
 Terminal tablosu ve CSV. Tek satır = tek hisse; motor sıraları + ham oranlar
 (F/K, PD/DD, EV/FAVÖK, net borç/FAVÖK, temettü) yan yana.
 
-- [ ] **Adım 1: Başarısız testi yaz**
+- [x] **Adım 1: Başarısız testi yaz**
 
 ```python
 def test_report_row_carries_ranks_and_raw_ratios_side_by_side():
@@ -533,7 +533,7 @@ def test_csv_and_terminal_render_the_same_rows():
     ...
 ```
 
-- [ ] **Adım 2–5: Koş, yaz, geçir, commit**
+- [x] **Adım 2–5: Koş, yaz, geçir, commit**
 
 ---
 
@@ -542,14 +542,14 @@ def test_csv_and_terminal_render_the_same_rows():
 **Dosyalar:**
 - Test: `tests/test_comparison.py`
 
-- [ ] **Adım 1: Uçtan uca test yaz**
+- [x] **Adım 1: Uçtan uca test yaz**
 
 Sentetik bir evreni `load_ratio_set` → `compute_ratios_for_ticker` →
 `score_universe` → iki motor → `comparison` → `report` zincirinden geçir ve
 sonunda gerçek bir tablo çıktığını doğrula. Bu, sözleşmelerin birbirine
 gerçekten oturduğunun tek kanıtıdır.
 
-- [ ] **Adım 2: Beş mutasyonu koş**
+- [x] **Adım 2: Beş mutasyonu koş**
 
 | # | Mutasyon | Kırmalı |
 |---|---|---|
@@ -563,7 +563,7 @@ Her biri: uygula → `pytest -q` → FAIL gör → `git checkout --` ile geri al
 **Kaçan mutasyon varsa kod değil test eksiktir** — Faz 1'de M3 tam olarak bunu
 gösterdi.
 
-- [ ] **Adım 3: Faz sonu commit**
+- [x] **Adım 3: Faz sonu commit**
 
 ---
 
@@ -586,3 +586,36 @@ gösterdi.
   en eksik parçası" diye işaretliyor ve öyle kalıyor.
 - **Gerçek BIST verisi.** Bu repoda veri yok; motorlar ve ekran kendilerine
   verilen satırlarla çalışır. İki repoyu buluşturmak ayrı bir karar.
+
+
+---
+
+## Uygulama Notu (2026-09-23, tamamlandı)
+
+Faz 2 koşuldu. **105 test geçiyor**, beş mutasyonun beşi de en az bir testi
+kırdı, uçtan uca zincir testi (`test_the_whole_chain_produces_a_board`) spec →
+calc → scoring → iki motor → tahta yolunu bir arada doğruluyor.
+
+Tahta gerçek BIST verisiyle çalıştırıldı (`research/board_run.py`, mali yıl
+2025-12-31, skor tarihi 2026-03-16, 89 hisse):
+
+- **Uzlaşma:** PGSUS (iki motorda da 1. sıra), MGROS.
+- **Ayrışma:** ASELS 74 sıra farkı, SAYAS 66, ECILC 61.
+- İstikrar ekseni 89 hissenin 74'ünde okunabildi; kalanı `MISSING`, çünkü
+  K24 uyarınca eksik eksenin ağırlığı kaliteye devredilmiyor.
+- `G_muhasebe` çoğu hissede uygulanamadı (`ACCRUALS_TO_ASSETS` ölçülemiyor) ve
+  bu K22 uyarınca tablonun UYARILAR bölümünde görünüyor.
+
+Plandan iki sapma:
+
+1. **İstikrar ekseni geçici olarak sürücüde skorlanıyor.** `board_run.py`
+   içindeki `stability_scores()` artık MAD'larını düz sıra tersine çeviriyor.
+   Üçlüyü `score_universe`'e düzgün bağlamak — yani medyan/MAD makinesinden
+   geçirmek — Faz 3'e kaldı; sözleşme hazır, kablolama değil.
+2. **Mali yıl seçimi.** İlk koşuda tahta tek hisseye düştü: MAVI'nin hesap
+   dönemi 31 Ocak'ta bitiyor ve `max()` onu seçiyordu. Sürücü artık en yaygın
+   yıl sonunu seçiyor.
+
+**Sıradaki (Faz 3):** Total Rasyo v2 ve Momentum/Revizyon motorları,
+`G_likidite` ve `G_risk` kapıları, üçlünün skorlamaya kablolanması. Üçü de
+fiyat/hacim ingest'ine bağlı ve o iş bu repoda yapılamaz.

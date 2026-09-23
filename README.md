@@ -9,7 +9,7 @@ bağımsız ağırlıklandırma.
 
 ```bash
 pip install pytest
-pytest -q          # 64 passed
+pytest -q          # 105 passed
 ```
 
 ## Neden ayrı bir motor
@@ -124,6 +124,12 @@ src/ratio_engine/scoring.py   aile normalizasyonlu kesitsel skorlama
 src/ratio_engine/evaluator.py güvenli formül değerlendirici (vendor'lanmış)
 src/ratio_engine/trend.py     8 çeyrek üzerinden (seviye, eğim, istikrar)
 src/ratio_engine/liquidity.py 60 günlük ortalama TL işlem hacmi
+src/engines/base.py           EngineResult sözleşmesi, kapılar çarpılır
+src/engines/saf_deger.py      değer ekseni + muhasebe kapısı
+src/engines/kalite_bilesik.py kalite 0.70 + marj istikrarı 0.30
+src/board/comparison.py       sıralama, uzlaşma, ayrışma
+src/board/report.py           terminal tablosu + CSV
+research/                     IC ölçüm düzeneği (paket dışı)
 sql/043_ratio_set_v2.sql      PostgreSQL şeması (2 tablo, 15 CHECK, 2 trigger)
 tests/                        63 test
 ```
@@ -156,9 +162,10 @@ Kapsam eşiğinin altında skor `None` döner ve durum `YETERSIZ_KAPSAM` olur �
 ## Doğrulama durumu
 
 ```
-64 test                          passed
+105 test                         passed
 Mutasyon testi (rasyo katmanı)   5/5 yakalandı
 Mutasyon testi (trend+likidite)  4/4 yakalandı
+Mutasyon testi (motor+tahta)     5/5 yakalandı
 Üçüncü parti bağımlılık          yok
 PostgreSQL migration             canlı veritabanında HENÜZ KOŞULMADI
 ```
