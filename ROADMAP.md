@@ -39,7 +39,7 @@ Durumlar:
 | ID | Faz | Durum | Çıktı |
 |---|---|---|---|
 | TR2-000 | Greenfield reset | DONE | Eski sistem varsayım olmaktan çıkarıldı |
-| TR2-010 | Legacy forensic audit | READY | KEEP / PORT / REWRITE / DELETE matrisi |
+| TR2-010 | Legacy forensic audit | IN_PROGRESS | KEEP / PORT / REWRITE / DELETE matrisi |
 | TR2-020 | Veri sözleşmesi | READY | KAP + market + Pro+ kanonik veri modeli |
 | TR2-030 | PIT/provenance çekirdeği | PLANNED | leakage-safe feature store |
 | TR2-040 | Feature registry | PLANNED | ekonomik anlamı tanımlı aday feature evreni |
@@ -79,7 +79,7 @@ Kanıt:
 
 # TR2-010 — LEGACY FORENSIC AUDIT
 
-**Durum: READY**
+**Durum: IN_PROGRESS**
 
 Bu ilk gerçek teknik iştir.
 
@@ -258,10 +258,13 @@ Uygulama kanıtı (`TR2-022`): `src/tr2/ingest.py` ham CSV baytlarını
 SHA256 adresli özel depoya kopyalar; her ingest için ayrı JSON manifest yazar.
 Timezone'suz export zamanı, bozuk CSV, yinelenen başlık veya güvensiz depo
 konumu reddedilir. `tests/tr2/test_ingest.py`: **7 passed**; tam repo:
-**112 passed** (2026-09-23 yerel çalışma). Gerçek InvestingPro+ dosyasının
+**115 passed** (2026-09-23 yerel çalışma). Gerçek InvestingPro+ dosyasının
 satır/sütun/şema receipt'i henüz yoktur; TR2-021 kapanmadan gerçek vendor
 entegrasyonu veya canonical mapping tamamlanmış sayılmaz. XLSX parserı gerçek
 dosya görülünce kararlaştırılacaktır.
+
+CI kapısı: `.github/workflows/tests.yml` push ve PR için tam `pytest` paketini
+çalıştırır. İlk GitHub Actions koşusunun sonucu ayrıca doğrulanacaktır.
 
 ## TR2-023 — InvestingPro+ canonical field mapping
 
