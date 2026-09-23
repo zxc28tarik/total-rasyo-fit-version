@@ -53,6 +53,35 @@ eklenmez.
 **Tek yaşayan uygulama planı:** [ROADMAP.md](ROADMAP.md)  
 **Greenfield matematik/veri mimarisi:** [docs/TOTAL_RASYO_2_0_MIMARI.md](docs/TOTAL_RASYO_2_0_MIMARI.md)
 
+### TR2 private CSV snapshot
+
+The new `src/tr2/ingest.py` captures a vendor CSV without changing its bytes.
+It records SHA256, exact headers and schema fingerprint, row/column counts,
+declared BIST universe/filters, export time, ingest time and parser version.
+The export timestamp must have a timezone. This first parser handles UTF-8 CSV;
+XLSX support and vendor field mapping require an actual export to validate.
+The raw bytes are stored by hash, and each capture writes a new manifest.
+
+```bash
+python src/tr2/ingest.py /path/to/export.csv \
+  --private-root data/private/tr2 \
+  --exported-at '2026-09-23T15:30:00+03:00' \
+  --universe 'BIST primary shares' \
+  --filters 'Trading Region: Turkey; exchange: Borsa Istanbul'
+```
+
+`data/private/` and `data/vendor/` are ignored by Git. Never commit licensed
+raw exports, credentials or cookies to this public repository. Manifests
+record what the caller supplied for filters and universe; actual UI settings
+must be checked against the export receipt. A current snapshot is usable only
+at or after its `snapshot_at`; it does not reconstruct historical availability.
+
+The legacy ratio audit starts with `research/tr2/legacy_ratio_inventory.json`.
+Its 67 entries copy only verifiable static definitions and source field labels;
+IC and PIT safety remain unset until audited with dated evidence. Three
+incorrect formulas have a `REWRITE` disposition; the other 64 decisions
+remain open. `REWRITE` does not mean the candidate passes TR2's OOS tests.
+
 > Aşağıdaki mevcut motor açıklaması tarihsel/legacy bağlamdır; TR2 tasarım kararı değildir.
 > Bir iş, ilgili `TR2-XXX` maddesi ve doğrulama kanıtı ROADMAP'te güncellenmeden
 > `DONE` sayılamaz.

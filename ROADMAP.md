@@ -39,7 +39,7 @@ Durumlar:
 | ID | Faz | Durum | Çıktı |
 |---|---|---|---|
 | TR2-000 | Greenfield reset | DONE | Eski sistem varsayım olmaktan çıkarıldı |
-| TR2-010 | Legacy forensic audit | READY | KEEP / PORT / REWRITE / DELETE matrisi |
+| TR2-010 | Legacy forensic audit | IN_PROGRESS | KEEP / PORT / REWRITE / DELETE matrisi |
 | TR2-020 | Veri sözleşmesi | READY | KAP + market + Pro+ kanonik veri modeli |
 | TR2-030 | PIT/provenance çekirdeği | PLANNED | leakage-safe feature store |
 | TR2-040 | Feature registry | PLANNED | ekonomik anlamı tanımlı aday feature evreni |
@@ -79,7 +79,7 @@ Kanıt:
 
 # TR2-010 — LEGACY FORENSIC AUDIT
 
-**Durum: READY**
+**Durum: IN_PROGRESS**
 
 Bu ilk gerçek teknik iştir.
 
@@ -87,7 +87,21 @@ Amaç: eski sistemi "korumak" değil, hangi parçaların gerçekten ekonomik ve 
 
 ## TR2-011 — Oran envanteri
 
-**Durum: READY**
+**Durum: IN_PROGRESS**
+
+Statik envanter (`research/tr2/legacy_ratio_inventory.json`) 67 skorlanan
+oranın tamamını legacy tanım dosyasının hash'iyle birlikte kaydeder. Üretici:
+`research/tr2/legacy_inventory.py`. Formül, yön, sektör, gerekli alan ve
+alanların dönem/kaynak etiketleri aktarılmıştır. Ekonomik tez, formül doğruluğu,
+PIT güvenliği, gerçekleşen coverage ve IC **henüz ölçülmediği için boş**
+bırakılmıştır. Üç formül incelemesi `REWRITE` kararı aldı: `REVENUE_CAGR_3Y`
+yıllıklandırılmamış üç yıllık değişim; `EBITDA_YOY_GROWTH` ve
+`FCF_YOY_GROWTH` mevcut TTM ile önceki yılın tek çeyreğini karşılaştırıyor.
+Bu karar yalnız hatalı legacy formülün taşınamayacağını söyler; TR2 feature
+olarak kabul kararı değildir. Kalan 64 karar açık. `tests/tr2/test_legacy_inventory.py`
+67/67 kapsama, uydurma IC bulunmaması ve kaynak formül değişince yeniden
+inceleme gerekliliği için 3 test içerir. Bu envanter
+tam forensic audit değildir; kalan inceleme ve PIT OOS analizi açıktır.
 
 Her legacy ratio için tablo:
 
@@ -220,7 +234,7 @@ Gerekli:
 
 # TR2-022 — Immutable raw ingest
 
-**Durum: READY**
+**Durum: DONE — CSV snapshot çekirdeği; gerçek Pro+ export kanıtı TR2-021'de bekliyor**
 
 Her source snapshot:
 
@@ -239,6 +253,25 @@ parser_version
 saklamalı.
 
 Raw dosya overwrite edilmez.
+
+Uygulama kanıtı (`TR2-022`): `src/tr2/ingest.py` ham CSV baytlarını
+SHA256 adresli özel depoya kopyalar; her ingest için ayrı JSON manifest yazar.
+Timezone'suz export zamanı, bozuk CSV, yinelenen başlık veya güvensiz depo
+konumu reddedilir. `tests/tr2/test_ingest.py`: **7 passed**; tam repo:
+**115 passed** (2026-09-23 yerel çalışma). Gerçek InvestingPro+ dosyasının
+satır/sütun/şema receipt'i henüz yoktur; TR2-021 kapanmadan gerçek vendor
+entegrasyonu veya canonical mapping tamamlanmış sayılmaz. XLSX parserı gerçek
+dosya görülünce kararlaştırılacaktır.
+
+CI kapısı: `.github/workflows/tests.yml` push ve PR için tam `pytest` paketini
+çalıştırır. İlk GitHub Actions koşusunun sonucu ayrıca doğrulanacaktır.
+
+## TR2-023 — InvestingPro+ canonical field mapping
+
+**Durum: BLOCKED → TR2-021**
+
+Gerçek export başlıkları, kimlik alanları, birimler, dönem ve PIT anlamları
+görülmeden vendor alanları canonical feature'lara eşlenmeyecek.
 
 ---
 
