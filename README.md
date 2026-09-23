@@ -13,29 +13,49 @@ pytest -q          # 105 passed
 ```
 
 
-## Total Rasyo 2.0 — aktif yön
+## Total Rasyo 2.0 — GREENFIELD aktif yön
 
-2026-09-23 itibarıyla proje yalnız bir rasyo motoru olarak değil, **PIT güvenli,
-kesitsel olarak kalibre edilmiş bir yatırım-sinyali sistemi** olarak geliştiriliyor.
-Kullanıcının InvestingPro+ üyeliği artık mevcut ve Pro+; ham veri zenginleştirme,
+2026-09-23 itibarıyla bu repository'deki mevcut rasyo motoru **legacy/baseline**
+olarak ele alınır. Hiçbir oran, formül, pillar, family, ağırlık, eşik veya
+kompozit yeni sistem tarafından otomatik olarak doğru kabul edilmez.
+
+Yeni Total Rasyo 2.0 ayrı namespace altında sıfırdan kurulacaktır:
+
+```
+src/tr2/
+research/tr2/
+tests/tr2/
+config/tr2/
+```
+
+Legacy bir parça yalnız şu audit sonucundan sonra taşınabilir:
+
+```
+KEEP_AS_IS / PORT_WITH_CHANGES / REWRITE / DELETE
+```
+
+Yeni sistemin hedefi yüksek görünen puan üretmek değil; point-in-time temiz,
+tekrarlanabilir ve ileri dönem sektör/piyasa düzeltilmiş getiriyi istikrarlı
+sıralayan bir alpha üretmektir.
+
+Üretim hedef çıktıları:
+
+- `raw_alpha`
+- `total_rasyo_0_100`
+- `confidence_0_100`
+- `risk_0_100`
+
+Kullanıcının InvestingPro+ üyeliği aktif durumdadır. Pro+; feature factory,
 forward expectations/revisions, valuation challenger/ensemble ve bağımsız
-benchmark katmanı olarak kullanılacak.
+benchmark olarak kullanılacaktır. Hazır vendor skorları doğrudan Total Rasyo'ya
+eklenmez.
 
-Yeni mimaride:
+**Tek yaşayan uygulama planı:** [ROADMAP.md](ROADMAP.md)  
+**Greenfield matematik/veri mimarisi:** [docs/TOTAL_RASYO_2_0_MIMARI.md](docs/TOTAL_RASYO_2_0_MIMARI.md)
 
-- `Raw Alpha` araştırma/model skoru olarak saklanır.
-- `Total Rasyo 0–100` Raw Alpha'nın BIST içindeki kesitsel rank/kalibrasyonudur.
-- `Confidence 0–100` ayrı tutulur.
-- `Risk 0–100` ayrı tutulur.
-- Quality, Valuation, Growth, Expectations, Momentum ve Fundamental Trend bağımsız faktör aileleridir.
-- InvestingPro hazır skorları Total'e kör biçimde eklenmez; katkıları backtest/ablation ile kanıtlanır.
-- Historical testlerde point-in-time veri disiplini kırılmaz.
-
-**Yaşayan uygulama planı:** [ROADMAP.md](ROADMAP.md)  
-**Matematik + InvestingPro+ mimarisi:** [docs/TOTAL_RASYO_2_0_MIMARI.md](docs/TOTAL_RASYO_2_0_MIMARI.md)
-
-> Projede bundan sonra bir iş, ilgili `TR2-XXX` maddesi ve kanıtı
-> `ROADMAP.md` içinde güncellenmeden `DONE` sayılmaz.
+> Aşağıdaki mevcut motor açıklaması tarihsel/legacy bağlamdır; TR2 tasarım kararı değildir.
+> Bir iş, ilgili `TR2-XXX` maddesi ve doğrulama kanıtı ROADMAP'te güncellenmeden
+> `DONE` sayılamaz.
 
 ## Neden ayrı bir motor
 
