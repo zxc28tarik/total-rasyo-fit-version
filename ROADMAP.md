@@ -569,3 +569,4 @@ Paralel dış bağımlılık:
 - Eski parça ancak KEEP/PORT/REWRITE/DELETE auditi sonrası TR2'ye girebilir.
 - InvestingPro+ entegrasyonu yeni sistemin feature discovery katmanına bağlandı.
 - Roadmap'in her işlemde güncellenmesi zorunluluğu korundu.
+- README aktif yön bölümü greenfield reset'e geçirildi; legacy motor açıkça yalnız baseline olarak işaretlendi (`f3b0825`).
