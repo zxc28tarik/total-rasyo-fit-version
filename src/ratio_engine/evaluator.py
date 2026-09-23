@@ -199,6 +199,10 @@ def safe_eval_expr(expr: str, env: dict, qs: QuarterSeries, pe: date):
     return eval_node(tree.body)
 
 
+class UnknownOperand(ValueError):
+    """A guard could not be decided because one side of it is unknown."""
+
+
 def safe_eval_condition(cond: str, env: dict, qs: QuarterSeries, pe: date) -> bool:
     s = cond.strip().replace(" is not null", " is not None").replace(" is null", " is None")
     tree = ast.parse(s, mode="eval")
@@ -222,8 +226,20 @@ def safe_eval_condition(cond: str, env: dict, qs: QuarterSeries, pe: date) -> bo
                 op_type = type(op_node)
                 if op_type in (ast.Is, ast.IsNot):
                     ok = CMP[op_type](left, right)
+                elif left is None or right is None:
+                    # An unknown operand makes the guard un-evaluable, not
+                    # unmet.  Returning False here would push the ratio out of
+                    # domain and hand it the out_of_domain verdict - typically
+                    # WORST, which counts as measured.  A hole in the data
+                    # would then read as "measured and terrible" and would
+                    # inflate coverage on top.  Callers catch this and report
+                    # MISSING.  Use `is null` / `is not null` to test for
+                    # absence deliberately.
+                    raise UnknownOperand(
+                        f"kosul degerlendirilemedi, operand None: {cond!r}"
+                    )
                 else:
-                    ok = False if left is None or right is None else CMP[op_type](left, right)
+                    ok = CMP[op_type](left, right)
                 if not ok:
                     return False
                 left = right

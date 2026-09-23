@@ -135,3 +135,25 @@ def test_unknown_sector_group_is_rejected():
     rs = real_set()
     with pytest.raises(RatioCalcV2Error):
         compute_ratios_for_ticker("X", _rows(), rs, "NO_SUCH_GROUP", {})
+
+
+def test_a_quarter_gap_is_missing_not_the_worst_reading_in_the_market():
+    """Found on real BIST data: PE_TTM came back WORST for 86 of 87 stocks.
+
+    ``sum4q`` returns None when a quarter is absent.  The domain guard then
+    compared None against 0, that comparison silently read as False, and the
+    ratio was pushed out of domain and labelled WORST - measured and terrible.
+    A hole in the data is not a verdict about the company, and WORST counts as
+    measured, so the hole was also inflating coverage.
+    """
+    rs = real_set()
+    rows = _rows()
+    for row in rows:
+        if row["period_end"] == date(2025, 9, 30):
+            del row["net_income"]
+
+    out = compute_ratios_for_ticker(
+        "X", rows, rs, "NONFIN", {("X", pe): 20.0 for pe in QUARTERS}
+    )
+    latest = {o.ratio_name: o for o in out if o.period_end == date(2025, 12, 31)}
+    assert latest["PE_TTM"].status == STATUS_MISSING
